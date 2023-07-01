@@ -349,8 +349,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="right|end"
                         android:layout_margin="5dp"
-                        android:backgroundTint="#009D48"
-                        android:text="Save"
+                        android:backgroundTint="#009D12"
+                        android:text="Save it"
                         android:textAllCaps="false">
 
                     </Button>
