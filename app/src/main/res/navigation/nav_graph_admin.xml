@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_admin"
+    app:startDestination="@id/dashBoardFragment">
+
+    <fragment
+        android:id="@+id/dashBoardFragment"
+        android:name="com.paybacktraders.paybacktraders.fragments.DashBoardFragment"
+        android:label="fragment_dash_board"
+        tools:layout="@layout/fragment_dash_board" />
+    <fragment
+        android:id="@+id/masterDistributorFragment"
+        android:name="com.paybacktraders.paybacktraders.fragments.MasterDistributorFragment"
+        android:label="fragment_master_distributor"
+        tools:layout="@layout/fragment_master_distributor" />
+    <fragment
+        android:id="@+id/clientFragment"
+        android:name="com.paybacktraders.paybacktraders.fragments.ClientFragment"
+        android:label="fragment_client"
+        tools:layout="@layout/fragment_client" />
+    <fragment
+        android:id="@+id/productFragment"
+        android:name="com.paybacktraders.paybacktraders.fragments.ProductFragment"
+        android:label="fragment_product"
+        tools:layout="@layout/fragment_product" />
+</navigation>

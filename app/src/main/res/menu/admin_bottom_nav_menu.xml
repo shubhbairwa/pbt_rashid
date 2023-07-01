@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/dashBoardFragment"
+        android:title="@string/dashboard"
+        android:icon="@drawable/ic_baseline_dashboard_24"
+
+        />
+    <item
+        android:id="@+id/masterDistributorFragment"
+        android:title="@string/master_distributor"
+        android:icon="@drawable/ic_baseline_assignment_ind_24"
+        />
+
+    <item
+        android:id="@+id/clientFragment"
+        android:title="@string/client"
+        android:icon="@drawable/ic_client"
+        />
+    <item
+        android:id="@+id/productFragment"
+        android:title="@string/product"
+        android:icon="@drawable/ic_product"
+        />
+
+
+</menu>
