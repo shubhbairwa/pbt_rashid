@@ -20,6 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/bottom_button"
+
             android:orientation="vertical">
 
             <LinearLayout
@@ -41,6 +42,7 @@
                         android:layout_height="wrap_content"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:clickable="true"
+                        android:contentDescription="@string/close"
                         android:elevation="2dp"
                         android:src="@drawable/ic_baseline_close_24"
                         app:tint="@color/white"
@@ -265,7 +267,7 @@
                             android:layout_marginLeft="5dp"
                             android:layout_marginRight="5dp"
                             android:padding="5dp"
-                            android:text="Total Quality" />
+                            android:text="Total Equity" />
 
                         <com.google.android.material.textfield.TextInputLayout
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
@@ -274,7 +276,7 @@
                             android:layout_marginLeft="5dp"
                             android:layout_marginRight="5dp"
                             android:layout_marginBottom="4dp"
-                            android:hint="Enter Total Quality"
+                            android:hint="Enter Total Equity"
                             app:boxCornerRadiusBottomEnd="10dp"
                             app:boxCornerRadiusBottomStart="10dp"
                             app:boxCornerRadiusTopEnd="10dp"
@@ -288,6 +290,86 @@
                                 android:maxLines="1" />
 
                         </com.google.android.material.textfield.TextInputLayout>
+
+                        <TextView
+                            style="@style/TextAppearance.MaterialComponents.Subtitle1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"
+                            android:padding="5dp"
+                            android:text="Broker Name" />
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/user_type_input_layout"
+                            style="@style/dropdown"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="8dp"
+                            android:hint="Select Broker">
+
+                            <AutoCompleteTextView
+                                android:id="@+id/dropdown"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="none" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <TextView
+                            style="@style/TextAppearance.MaterialComponents.Subtitle1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"
+                            android:padding="5dp"
+                            android:text="Payment Screen shot" />
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                           android:layout_margin="8dp"
+                            android:layout_height="wrap_content">
+
+                            <Button
+                                android:id="@+id/btnChooseFile"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+
+                              android:backgroundTint="@color/green_aap"
+                                android:text="Choose File"
+                                />
+                            <com.google.android.material.textfield.TextInputLayout
+                                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="5dp"
+                                android:layout_marginRight="5dp"
+                                android:layout_marginBottom="4dp"
+                                android:hint="choose file"
+                                app:boxCornerRadiusBottomEnd="10dp"
+                                app:boxCornerRadiusBottomStart="10dp"
+                                app:boxCornerRadiusTopEnd="10dp"
+                                app:boxCornerRadiusTopStart="10dp">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/et_file_name"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:editable="false"
+                                    android:maxLines="1" />
+
+                            </com.google.android.material.textfield.TextInputLayout>
+
+
+
+
+
+                        </LinearLayout>
+
+
+
+
 
                     </LinearLayout>
 
@@ -337,7 +419,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="right|end"
                         android:layout_margin="5dp"
-                        android:backgroundTint="#009D48"
+                        android:backgroundTint="@color/green_aap"
                         android:text="Save"
                         android:textAllCaps="false">
 

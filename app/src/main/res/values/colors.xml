@@ -7,4 +7,11 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="blue_dashboard_color">#D2D3FF</color>
+    <color name="green_dashboard_color">#BFF0C3</color>
+    <color name="yellow_dashboard_color">#FFEEDA</color>
+    <color name="pink_dashboard_color">#FFD1E1</color>
+    <color name="green_aap">#009D48</color>
+
+
 </resources>
