@@ -21,17 +21,13 @@ interface Apis {
 //    ): Call<TicketDetailsModel>
 
 
-
-
-
-
-
     /*****NEW API RESPONSE WITH RESOURCE CLASSES****/
     @POST("employee/login")
     @Headers("Content-Type: application/json; charset=UTF-8")
     suspend fun doLogin(@Body data : HashMap<String,Any>): Response<ResponseLogin>
 
-
+    @POST("customer/create")
+    fun customerCreate(@Body request : MultipartBody): Call<ResponseLogin>
 
 
 

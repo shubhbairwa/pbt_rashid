@@ -63,19 +63,17 @@ android:background="@android:color/transparent"
         android:name="androidx.navigation.fragment.NavHostFragment"
         app:defaultNavHost="true"
         app:navGraph="@navigation/nav_graph_distributor"
-
         android:id="@+id/fragment_container_distributor"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbarMain"
-        app:layout_constraintBottom_toTopOf="@id/bottomNavDistributor"
-        />
+        app:layout_constraintBottom_toTopOf="@id/bottomNavDistributor" />
+
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavDistributor"
         android:layout_width="0dp"
         android:layout_height="55dp"
-
         app:menu="@menu/bottom_nav_menu"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
