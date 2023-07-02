@@ -4,6 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:src="@drawable/logo"
+        app:layout_constraintBottom_toTopOf="@id/login_container"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <LinearLayout
         android:id="@+id/login_container"
         android:layout_width="match_parent"
@@ -20,6 +28,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/user_type_input_layout"
             style="@style/dropdown"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
@@ -40,9 +49,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:hint="Email">
+            android:hint="userName">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etUserName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
@@ -60,6 +70,7 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
+                android:id="@+id/et_password"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword" />
 

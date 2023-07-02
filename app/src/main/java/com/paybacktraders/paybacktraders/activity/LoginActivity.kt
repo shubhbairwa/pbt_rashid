@@ -7,35 +7,116 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import android.widget.Toast.makeText
+import androidx.lifecycle.ViewModelProvider
+import com.paybacktraders.paybacktraders.PayBackTradersApplication
 import com.paybacktraders.paybacktraders.R
+import com.paybacktraders.paybacktraders.api.ApiClient
+import com.paybacktraders.paybacktraders.api.Apis
+import com.paybacktraders.paybacktraders.apihelper.Event
 import com.paybacktraders.paybacktraders.databinding.ActivityLoginBinding
 import com.paybacktraders.paybacktraders.global.Global
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.paybacktraders.paybacktraders.repository.DefaultMainRepositories
+import com.paybacktraders.paybacktraders.repository.MainRepos
+import com.paybacktraders.paybacktraders.viewmodel.MainViewModel
+import com.paybacktraders.paybacktraders.viewmodel.MainViewModelProvider
+import com.pixplicity.easyprefs.library.Prefs
+import es.dmoral.toasty.Toasty
+import kotlinx.coroutines.*
 
 class LoginActivity : AppCompatActivity() {
     lateinit var binding: ActivityLoginBinding
     var selectedItem = ""
+    lateinit var viewModel: MainViewModel
 
+
+    private fun setUpViewModel() {
+        val dispatchers: CoroutineDispatcher = Dispatchers.Main
+        val mainRepos = DefaultMainRepositories() as MainRepos
+        val fanxApi: Apis = ApiClient().service
+        val viewModelProviderfactory =
+            MainViewModelProvider(application, mainRepos, dispatchers, fanxApi)
+        viewModel = ViewModelProvider(this, viewModelProviderfactory)[MainViewModel::class.java]
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        Global.showDialog(this)
-        CoroutineScope(Dispatchers.Main).launch {
-           delay(2000)
-            Global.hideDialog()
+        setUpViewModel()
+        binding.etUserName.setText("1234567890")
+        binding.etPassword.setText("admin@123")
+        //Global.showDialog(this)
+//        CoroutineScope(Dispatchers.Main).launch {
+//            delay(2000)
+//            Global.hideDialog()
+//        }
+
+
+        setupUserTypeDropDown()
+
+
+        binding.loginButton.setOnClickListener {
+            var hashMap = HashMap<String, Any>()
+            hashMap.put("UserName", binding.etUserName.text.toString())
+            hashMap.put("Password", binding.etPassword.text.toString())
+            viewModel.doLogin(hashMap)
+
+//
+//
+
         }
-//        val dialog=Dialog(this)
-//        val view=this.layoutInflater.inflate(R.layout.dialog_fullscreen,null,false)
-//        dialog.setContentView(view)
-//        dialog.setCancelable(false)
-//        dialog.show()
 
+        subscribeToObserver()
+    }
 
+    private fun subscribeToObserver() {
+        viewModel.login.observe(this, Event.EventObserver(
+            onError = {
+                Global.hideDialog()
+                Toasty.error(this,it,Toasty.LENGTH_SHORT).show()
+               // Toasty.makeText(this, it, Toast.LENGTH_SHORT).show()
+            }, onLoading = {
+                Global.showDialog(this)
+            }, {
+                Global.hideDialog()
+                if (it.status.equals(200)) {
+                    Prefs.putInt(Global.ID, it.data[0].id)
+                    Prefs.putString(Global.EmployeeCode, it.data[0].EmployeeCode)
+                    Prefs.putString(Global.UserName, it.data[0].UserName)
+                    Prefs.putString(Global.Password, it.data[0].Password)
+                    Prefs.putString(Global.FullName, it.data[0].FullName)
+                    Prefs.putString(Global.Email, it.data[0].Email)
+                    Prefs.putString(Global.Mobile, it.data[0].Mobile)
+                    Prefs.putString(Global.Role, it.data[0].Role)
+                    Prefs.putString(Global.CreatedBy, it.data[0].CreatedBy)
+                    Prefs.putString(Global.Status, it.data[0].Status)
+                    Prefs.putString(Global.ReportingTo, it.data[0].ReportingTo)
+                    Prefs.putString(Global.DeliveryAddress, it.data[0].DeliveryAddress)
+                    Prefs.putString(Global.WalletAmount, it.data[0].WalletAmount)
+                    Prefs.putString(Global.Datetime, it.data[0].Datetime)
+                    Toasty.success(this,it.message,Toasty.LENGTH_SHORT).show()
+                    // Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
+
+                    if (it.data[0].Role.equals("Admin", ignoreCase = true)) {
+                        Intent(this, AdminActivity::class.java).also {
+                            startActivity(it)
+                            finish()
+                        }
+                    } else {
+                        Intent(this, MasterDistributorActivity::class.java).also {
+                            startActivity(it)
+                            finish()
+                        }
+                    }
+                } else {
+                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        ))
+    }
+
+    private fun setupUserTypeDropDown() {
         // Create an array of items for the dropdown
         val items = resources.getStringArray(R.array.user_type)
 
@@ -56,22 +137,6 @@ class LoginActivity : AppCompatActivity() {
             // For example, display a toast message
             Toast.makeText(this, "Selected item: $selectedItem", Toast.LENGTH_SHORT).show()
         }
-
-
-        binding.loginButton.setOnClickListener {
-            if (selectedItem.equals("Admin", ignoreCase = true)) {
-                Intent(this, AdminActivity::class.java).also {
-                    startActivity(it)
-                }
-            } else {
-                Intent(this, MasterDistributorActivity::class.java).also {
-                    startActivity(it)
-                }
-            }
-
-        }
-
-
     }
 
 
