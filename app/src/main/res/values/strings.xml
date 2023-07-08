@@ -19,4 +19,5 @@
     <string name="total_product">Total Product</string>
     <string name="total_wallet">Total_wallet</string>
     <string name="close">close</string>
+    <string name="signing_term">By signing in, you agree to <font>our terms of use</font> policy.</string>
 </resources>

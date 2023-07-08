@@ -1,11 +1,22 @@
 package com.paybacktraders.paybacktraders.fragments
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.paybacktraders.paybacktraders.R
+import com.paybacktraders.paybacktraders.activity.AdminActivity
+import com.paybacktraders.paybacktraders.activity.MasterDistributorActivity
+import com.paybacktraders.paybacktraders.adapters.ClientAdapter
+import com.paybacktraders.paybacktraders.apihelper.Event
+import com.paybacktraders.paybacktraders.databinding.FragmentClientBinding
+import com.paybacktraders.paybacktraders.global.Global
+import com.paybacktraders.paybacktraders.viewmodel.MainViewModel
+import com.pixplicity.easyprefs.library.Prefs
+import es.dmoral.toasty.Toasty
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -18,6 +29,13 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class ClientFragment : Fragment() {
+    private var _binding: FragmentClientBinding? = null
+    private val binding get() = _binding
+    lateinit var viewModel: MainViewModel
+    var where: String = ""
+    var hashMap = HashMap<String, Any>()
+    var announcementAdapter = ClientAdapter()
+
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -39,6 +57,8 @@ class ClientFragment : Fragment() {
     }
 
     companion object {
+        private const val TAG = "ClientFragment"
+
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
@@ -57,4 +77,110 @@ class ClientFragment : Fragment() {
                 }
             }
     }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        where = activity?.intent?.getStringExtra(Global.INTENT_WHERE).toString()
+        Log.e(TAG, "onViewCreated: $where")
+
+        /***check for type of user so that we assign viewmodel according to their corresponding activity**/
+        viewModel = if (where.equals("admin", ignoreCase = true)) {
+            Log.e(TAG, "onViewCreated: utut")
+            (activity as AdminActivity).viewModel
+        } else {
+            Log.e(TAG, "onViewCreated: master")
+            (activity as MasterDistributorActivity).viewModel
+        }
+        _binding = FragmentClientBinding.bind(view)
+
+
+
+        if (where.equals("admin", ignoreCase = true)) {
+            viewModel.getClientAll()
+            subscribeToObserver()
+        }else{
+            hashMap[Global.PAYLOAD_EMPLOYEE_ID] = Prefs.getInt(Global.ID)
+            hashMap[Global.PAYLOAD_TYPE] = "Connect"
+
+            viewModel.getClientALlFilter(hashMap)
+            subscribeToFilterObserver()
+        }
+
+       // viewModel.getDashboardData(hashMap)
+
+        setUpRecyclerView()
+
+
+    }
+
+    private fun setUpRecyclerView() = binding?.rvClientFragment?.apply {
+        adapter = announcementAdapter
+        layoutManager = LinearLayoutManager(requireContext())
+    }
+
+
+    private fun subscribeToObserver() {
+
+
+        viewModel.clientAll.observe(viewLifecycleOwner, Event.EventObserver(
+            onError = {
+                Global.hideDialog()
+                Toasty.error(requireContext(), it).show()
+            }, onLoading = {
+                Global.showDialog(requireActivity())
+
+            }, {
+                Global.hideDialog()
+                //  Toasty.success(requireContext(),it)
+                if (it.status.equals(200)) {
+                    if (it.data.isEmpty()) {
+                        binding!!.nodataFound.visibility = View.VISIBLE
+                        announcementAdapter.announcement = it.data
+                    } else {
+                        binding!!.nodataFound.visibility = View.GONE
+                        announcementAdapter.announcement = it.data
+                    }
+
+
+                } else {
+                    Toasty.error(requireContext(), it.message).show()
+                }
+
+            }
+        ))
+    }
+
+    private fun subscribeToFilterObserver() {
+
+
+        viewModel.clientFilter.observe(viewLifecycleOwner, Event.EventObserver(
+            onError = {
+                Global.hideDialog()
+                Toasty.error(requireContext(), it).show()
+            }, onLoading = {
+                Global.showDialog(requireActivity())
+
+            }, {
+                Global.hideDialog()
+                //  Toasty.success(requireContext(),it)
+                if (it.status.equals(200)) {
+                    if (it.data.isEmpty()) {
+                        binding!!.nodataFound.visibility = View.VISIBLE
+                        announcementAdapter.announcement = it.data
+                    } else {
+                        binding!!.nodataFound.visibility = View.GONE
+                        announcementAdapter.announcement = it.data
+                    }
+
+
+                } else {
+                    Toasty.error(requireContext(), it.message).show()
+                }
+
+            }
+        ))
+    }
+
+
 }

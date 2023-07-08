@@ -19,13 +19,14 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/lightBlueAccent"
             android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:padding="5dp">
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -42,6 +43,7 @@
                         android:text="Customer : " />
 
                     <TextView
+                        android:id="@+id/tvCustomerName"
                         style="@style/TextAppearance.MaterialComponents.Body2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -56,12 +58,16 @@
                     android:gravity="end">
 
                     <TextView
+                        android:id="@+id/tvCustomerStatus"
                         style="@style/TextAppearance.MaterialComponents.Subtitle2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
                         android:layout_marginRight="5dp"
-                        android:text="Disconnect" />
+                        android:background="@drawable/background_status_client"
+                        android:padding="6dp"
+                        android:text="Disconnect"
+                        android:textColor="@color/white" />
 
                 </LinearLayout>
 
@@ -70,8 +76,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:padding="5dp">
 
                 <TextView
                     style="@style/TextAppearance.MaterialComponents.Subtitle2"
@@ -82,6 +88,7 @@
                     android:text="Mobile   : " />
 
                 <TextView
+                    android:id="@+id/tvCustomermobile"
                     style="@style/TextAppearance.MaterialComponents.Body2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -95,8 +102,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:padding="5dp">
 
 
                 <TextView
@@ -108,6 +115,7 @@
                     android:text="Requested Date : " />
 
                 <TextView
+                    android:id="@+id/tvCustomerRequestDate"
                     style="@style/TextAppearance.MaterialComponents.Body2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

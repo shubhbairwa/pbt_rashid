@@ -57,7 +57,7 @@
     </com.google.android.material.appbar.MaterialToolbar>
 
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:name="androidx.navigation.fragment.NavHostFragment"

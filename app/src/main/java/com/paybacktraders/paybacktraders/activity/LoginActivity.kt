@@ -100,11 +100,13 @@ class LoginActivity : AppCompatActivity() {
 
                     if (it.data[0].Role.equals("Admin", ignoreCase = true)) {
                         Intent(this, AdminActivity::class.java).also {
+                            it.putExtra(Global.INTENT_WHERE,"admin")
                             startActivity(it)
                             finish()
                         }
                     } else {
                         Intent(this, MasterDistributorActivity::class.java).also {
+                            it.putExtra(Global.INTENT_WHERE,"dist")
                             startActivity(it)
                             finish()
                         }

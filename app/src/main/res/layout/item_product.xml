@@ -21,81 +21,71 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_margin="8dp">
 
-                <LinearLayout
-                    android:layout_width="0dp"
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/btnAddProduct"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
 
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="end">
-
-                    <com.google.android.material.chip.ChipGroup
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_filter_icon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginRight="10dp">
+                        android:elevation="2dp"
+                        android:visibility="gone"
+                        app:chipEndPadding="4dp"
+                        app:chipIcon="@drawable/ic_baseline_calendar_month_24"
+                        app:chipIconTint="#009D48"
+                        app:chipStartPadding="4dp"
+                        app:chipStrokeColor="#009D48"
+                        app:chipStrokeWidth="1dp"
+                        app:rippleColor="#009D48"
+                        app:textEndPadding="0dp"
+                        app:textStartPadding="0dp" />
 
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/chip_filter_icon"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:elevation="2dp"
-                            android:visibility="gone"
-                            app:chipEndPadding="4dp"
-                            app:chipIcon="@drawable/ic_baseline_calendar_month_24"
-                            app:chipIconTint="#009D48"
-                            app:chipStartPadding="4dp"
-                            app:chipStrokeColor="#009D48"
-                            app:chipStrokeWidth="1dp"
-                            app:rippleColor="#009D48"
-                            app:textEndPadding="0dp"
-                            app:textStartPadding="0dp" />
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipAddProuct"
+                        style="@style/TextAppearance.MaterialComponents.Subtitle2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:elevation="4dp"
+                        android:text="Add"
+                        android:textColor="#009D48"
+                        android:textStyle="bold"
+                        app:chipBackgroundColor="@color/white"
+                        app:chipIcon="@drawable/ic_baseline_add_24"
+                        app:chipIconTint="#009D48"
+                        app:chipStrokeColor="#009D48"
+                        app:chipStrokeWidth="1dp"
+                        app:rippleColor="#009D48" />
 
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/add_newItem"
-                            style="@style/TextAppearance.MaterialComponents.Subtitle2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:elevation="4dp"
-                            android:text="Add"
-                            android:textColor="#009D48"
-                            android:textStyle="bold"
-                            app:chipBackgroundColor="@color/white"
-                            app:chipIcon="@drawable/ic_baseline_add_24"
-                            app:chipIconTint="#009D48"
-                            app:chipStrokeColor="#009D48"
-                            app:chipStrokeWidth="1dp"
-                            app:rippleColor="#009D48" />
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/tvShareLink"
+                        style="@style/TextAppearance.MaterialComponents.Subtitle2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:elevation="4dp"
+                        android:text="Share Link"
+                        android:textColor="#009D48"
+                        android:textStyle="bold"
+                        app:chipBackgroundColor="@color/white"
+                        app:chipIconTint="#009D48"
+                        app:chipStrokeColor="#009D48"
+                        app:chipStrokeWidth="1dp"
+                        app:rippleColor="#009D48" />
 
-                        <com.google.android.material.chip.Chip
-                            style="@style/TextAppearance.MaterialComponents.Subtitle2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:elevation="4dp"
-                            android:text="Share Link"
-                            android:textColor="#009D48"
-                            android:textStyle="bold"
-                            app:chipBackgroundColor="@color/white"
-                            app:chipIconTint="#009D48"
-                            app:chipStrokeColor="#009D48"
-                            app:chipStrokeWidth="1dp"
-                            app:rippleColor="#009D48" />
+                </com.google.android.material.chip.ChipGroup>
 
-                    </com.google.android.material.chip.ChipGroup>
 
-                </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-            </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -119,12 +109,13 @@
                         android:text="Boat No." />
 
                     <TextView
+                        android:id="@+id/tvProductId"
                         style="@style/TextAppearance.MaterialComponents.Body2"
                         android:layout_width="0dp"
-                        android:layout_weight="0.4"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
                         android:layout_marginRight="5dp"
+                        android:layout_weight="0.4"
                         android:padding="5dp"
                         android:text="001" />
 
@@ -145,6 +136,7 @@
                         android:text="Boat Name" />
 
                     <TextView
+                        android:id="@+id/tvBoatName"
                         style="@style/TextAppearance.MaterialComponents.Body2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -179,12 +171,13 @@
                         android:text="Broker" />
 
                     <TextView
+                        android:id="@+id/tvBrokerName"
                         style="@style/TextAppearance.MaterialComponents.Body2"
                         android:layout_width="0dp"
-                        android:layout_weight="0.5"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
                         android:layout_marginRight="5dp"
+                        android:layout_weight="0.5"
                         android:padding="5dp"
                         android:text="Multibank" />
 
@@ -205,6 +198,7 @@
                         android:text="Profit (MA)" />
 
                     <TextView
+                        android:id="@+id/tvProfit"
                         style="@style/TextAppearance.MaterialComponents.Body2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -239,12 +233,13 @@
                         android:text="Max DD" />
 
                     <TextView
+                        android:id="@+id/tvMaxDD"
                         style="@style/TextAppearance.MaterialComponents.Body2"
                         android:layout_width="0dp"
-                        android:layout_weight="0.4"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
                         android:layout_marginRight="5dp"
+                        android:layout_weight="0.4"
                         android:padding="5dp"
                         android:text="20%" />
 
