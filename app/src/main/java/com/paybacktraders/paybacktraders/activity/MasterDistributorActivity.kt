@@ -41,8 +41,7 @@ class MasterDistributorActivity : AppCompatActivity() {
         setContentView(binding.root)
         setUpViewModel()
 
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.fragment_container_distributor) as NavHostFragment
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_container_distributor) as NavHostFragment
         navController = navHostFragment.navController
         NavigationUI.setupWithNavController(binding.bottomNavDistributor, navController)
 
@@ -59,13 +58,11 @@ class MasterDistributorActivity : AppCompatActivity() {
                     }
                     Toasty.info(this@MasterDistributorActivity, "logOut Successfully")
                 }
-
-
-
             }
         }
 
         binding.tvToolbarDashboard.text = Prefs.getString(Global.FullName,"NOt Found")
+
 
 
     }

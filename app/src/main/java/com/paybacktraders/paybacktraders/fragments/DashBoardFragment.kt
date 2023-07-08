@@ -124,5 +124,3 @@ class DashBoardFragment : Fragment(R.layout.fragment_dash_board) {
 
     }
 }
-
-
