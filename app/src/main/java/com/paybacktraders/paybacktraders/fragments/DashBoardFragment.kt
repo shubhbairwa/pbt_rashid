@@ -1,9 +1,11 @@
 package com.paybacktraders.paybacktraders.fragments
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.paybacktraders.paybacktraders.R
 import com.paybacktraders.paybacktraders.activity.AdminActivity
@@ -12,6 +14,7 @@ import com.paybacktraders.paybacktraders.adapters.ClientAdapter
 import com.paybacktraders.paybacktraders.apihelper.Event
 import com.paybacktraders.paybacktraders.databinding.FragmentDashBoardBinding
 import com.paybacktraders.paybacktraders.global.Global
+import com.paybacktraders.paybacktraders.model.model.apirequestbody.BodyClientStatus
 import com.paybacktraders.paybacktraders.viewmodel.MainViewModel
 import com.pixplicity.easyprefs.library.Prefs
 import es.dmoral.toasty.Toasty
@@ -52,6 +55,41 @@ class DashBoardFragment : Fragment(R.layout.fragment_dash_board) {
         viewModel.getClientAll()
         subscribeToObserver()
         setUpRecyclerView()
+        announcementAdapter.setOnItemClickListener {
+            if (it.ConnectionStatus.equals("Connect", ignoreCase = true)) {
+                Toasty.success(requireContext(), "Already Connected", Toasty.LENGTH_SHORT).show()
+            } else {
+                if (Prefs.getString(Global.Role).equals(Global.ADMIN_STRING)) {
+                    val alert = AlertDialog.Builder(requireContext())
+                    alert.setTitle("Are you sure...You want to change the status?")
+                    alert.setPositiveButton(
+                        "yes",
+                        DialogInterface.OnClickListener { dialog, which ->
+                            viewModel.updateCustomerStatus(
+                                BodyClientStatus(
+                                    EmployeeId = Prefs.getInt(Global.ID),
+                                    CustomerId = it.id,
+                                    Status = "Approved",
+                                    Remarks = "${it.FullName} approved by ${Prefs.getString(Global.FullName)}"
+                                )
+                            )
+                            SubscribeToStatus()
+
+                        })
+                    alert.setNegativeButton("No", DialogInterface.OnClickListener { dialog, which ->
+                        //  Toasty.warning(requireContext(), "NO", Toasty.LENGTH_SHORT).show()
+
+                    })
+                    alert.show()
+
+                } else {
+                    Toasty.warning(requireContext(), "Not Authorized", Toasty.LENGTH_SHORT).show()
+                }
+            }
+
+
+        }
+
     }
 
     private fun setUpRecyclerView() = binding?.recyclerView?.apply {
@@ -59,6 +97,29 @@ class DashBoardFragment : Fragment(R.layout.fragment_dash_board) {
         layoutManager = LinearLayoutManager(requireContext())
     }
 
+
+    private fun SubscribeToStatus() {
+        viewModel.updateCustomerStatus.observe(viewLifecycleOwner, Event.EventObserver(
+            onError = {
+                Global.hideDialog()
+                Toasty.error(requireContext(), it).show()
+                Log.e(TAG, "SubscribeToStatus:$it ",)
+            }, onLoading = {
+                Global.showDialog(requireActivity())
+
+            }, {
+                Global.hideDialog()
+                //  Toasty.success(requireContext(),it)
+                if (it.status.equals(200)) {
+                    Toasty.success(requireContext(), it.message, Toasty.LENGTH_SHORT).show()
+
+                } else {
+                    Toasty.error(requireContext(), it.message).show()
+                }
+
+            }
+        ))
+    }
 
     private fun subscribeToObserver() {
         viewModel.dashBOardData.observe(viewLifecycleOwner, Event.EventObserver(
@@ -76,7 +137,7 @@ class DashBoardFragment : Fragment(R.layout.fragment_dash_board) {
                         tvClientCounter.text = it.data[0].totalCustomer.toString()
                         tvDistributorCounter.text = it.data[0].totalDistributor.toString()
                         tvProductCounter.text = it.data[0].totalProduct.toString()
-                        tvWalletCounter.text = it.data[0].totalAmountInWallet.toString()
+                        tvWalletCounter.text = "USD ${it.data[0].totalAmountInWallet.toString()}"
                     }
 
                 } else {

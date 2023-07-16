@@ -22,6 +22,12 @@ class ProductAdapter :
     fun setOnItemClickListener(listener: (DataProduct) -> Unit) {
         onItemClickListener = listener
     }
+
+
+    private var onItemAddClientClickListener: ((DataProduct) -> Unit)? = null
+    fun setOnAddClientItemClickListener(listener: (DataProduct) -> Unit) {
+        onItemAddClientClickListener = listener
+    }
 //    interface RvItemClickListener {
 //        fun onChildItemClick(parentPosition: Int, childPosition: Int, item: ContestAll?)
 //    }
@@ -70,6 +76,12 @@ class ProductAdapter :
                     }
                 }
 
+                chipAddProuct.setOnClickListener {
+                    onItemAddClientClickListener?.let { click ->
+                        click(currentAnnouncement)
+
+                    }
+                }
 
             }
         }

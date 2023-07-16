@@ -16,12 +16,14 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.navigation.fragment.NavHostFragment
+import com.google.android.material.textfield.TextInputEditText
 import com.paybacktraders.paybacktraders.api.ApiClient
 import com.paybacktraders.paybacktraders.api.Apis
 import com.paybacktraders.paybacktraders.databinding.ActivityAddClientBinding
-import com.paybacktraders.paybacktraders.fragments.DashBoardFragment
+import com.paybacktraders.paybacktraders.global.Global
 import com.paybacktraders.paybacktraders.model.model.apiresponse.ResponseLogin
+import com.pixplicity.easyprefs.library.Prefs
+import es.dmoral.toasty.Toasty
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -31,12 +33,13 @@ import retrofit2.Response
 import java.io.File
 import java.util.*
 
+
 class AddClientActivity : AppCompatActivity() {
     lateinit var binding: ActivityAddClientBinding
     var RESULT_LOAD_IMAGE = 101
-
+    var productId = 1
     lateinit var file: File
-    lateinit var picturePath: String
+    var picturePath: String = ""
     lateinit var apis: Apis
     val REQUEST_ID_MULTIPLE_PERMISSIONS = 7
     var brokerList = arrayListOf<String>("EXNESS", "Vantage", "Fxopulence", "Multibank", "All")
@@ -44,16 +47,20 @@ class AddClientActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding= ActivityAddClientBinding.inflate(layoutInflater)
+        binding = ActivityAddClientBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        productId = intent.getIntExtra(Global.ID, 1)
         binding.btnChooseFile.setOnClickListener {
             checkAndRequestPermissions()
             val i = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             startActivityForResult(i, RESULT_LOAD_IMAGE)
         }
+        binding.closeDilogBt.setOnClickListener {
+            finish()
+        }
 
-        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, R.layout.simple_dropdown_item_1line, brokerList)
+        val adapter: ArrayAdapter<String> =
+            ArrayAdapter<String>(this, R.layout.simple_dropdown_item_1line, brokerList)
         binding.acBrokerName.setAdapter<ArrayAdapter<String>>(adapter)
 
         binding.acBrokerName.setOnItemClickListener { parent, view, position, id ->
@@ -61,13 +68,74 @@ class AddClientActivity : AppCompatActivity() {
         }
 
         binding.btnSave.setOnClickListener {
-            apiHit()
+            if (confirmInput(
+                    binding.etFullName,
+                    binding.etTradingAcc,
+                    binding.etEmail,
+                    binding.etPhoneNumber,
+                    binding.etPassword,
+                    binding.etTotalEquality,
+                    brokerName,
+                    picturePath
+                )
+            ) {
+                Global.showDialog(this)
+                apiHit()
+                // Toast.makeText(this, "qweryu", Toast.LENGTH_SHORT).show()
+            } else {
+                // Toast.makeText(this, "NNNA", Toast.LENGTH_SHORT).show()
+            }
+            //
         }
 
         binding.clearData.setOnClickListener {
             clearFieldData()
         }
 
+    }
+
+
+    private fun confirmInput(
+        fullName: TextInputEditText, tradingAc: TextInputEditText, enterEmail: TextInputEditText,
+        enterPhone: TextInputEditText, tradingPass: TextInputEditText,
+        totalequity: TextInputEditText, broker: String, picture: String
+    ): Boolean {
+        if (fullName.text!!.isEmpty()) {
+            fullName.requestFocus()
+            fullName.error = "invalid"
+            return false
+        } else if (tradingAc.text!!.isEmpty()) {
+            tradingAc.requestFocus()
+            tradingAc.error = "invalid"
+            return false
+        } else if (enterEmail.text!!.isEmpty()) {
+            enterEmail.requestFocus()
+            enterEmail.error = "invalid"
+            return false
+        } else if (enterPhone.text!!.isEmpty()) {
+            enterPhone.requestFocus()
+            enterPhone.error = "invalid"
+            return false
+        } else if (tradingPass.text!!.isEmpty()) {
+            tradingPass.requestFocus()
+            tradingPass.error = "invalid"
+            return false
+        } else if (totalequity.text!!.isEmpty()) {
+            totalequity.requestFocus()
+            totalequity.error = "invalid"
+            return false
+        } else if (broker.isEmpty()) {
+            binding.acBrokerName.requestFocus()
+            binding.acBrokerName.error = "invalid"
+            return false
+        } else if (picturePath.isEmpty()) {
+            binding.etFileName.requestFocus()
+            binding.etFileName.error = "invalid"
+            return false
+        } else {
+
+            return true
+        }
     }
 
     private fun clearFieldData() {
@@ -81,8 +149,9 @@ class AddClientActivity : AppCompatActivity() {
     }
 
     //todo api hitting here...
-    fun apiHit(){
+    fun apiHit() {
         val builder = MultipartBody.Builder()
+      //  val part: MultipartBody.Part = MultipartBody.Part.createFormData("int", "123")
         builder.setType(MultipartBody.FORM)
         builder.addFormDataPart("FullName", binding.etFullName.text.toString())
         builder.addFormDataPart("Email", binding.etEmail.text.toString())
@@ -90,54 +159,82 @@ class AddClientActivity : AppCompatActivity() {
         builder.addFormDataPart("TradingAcNo", binding.etTradingAcc.text.toString())
         builder.addFormDataPart("TradingAcPass", binding.etPassword.text.toString())
         builder.addFormDataPart("TotalEquity", binding.etTotalEquality.text.toString())
-        builder.addFormDataPart("CreatedBy", "2")
+        builder.addFormDataPart("CreatedBy", Prefs.getInt(Global.ID).toString())
         builder.addFormDataPart("BrokerName", brokerName)
-        builder.addFormDataPart("ProductId", "1")
+        builder.addFormDataPart("ProductId", productId.toString())
+        //builder.addPart(part)
 
-    //todo convert multi image array list into multipartBody.part form....
+        //todo convert multi image array list into multipartBody.part form....
         val file: File
         try {
             file = File(picturePath)
-            builder.addFormDataPart("PaymentProof", file.name, RequestBody.create("multipart/form-data".toMediaTypeOrNull(), file))
-        }catch (e:Exception){
-            builder.addFormDataPart("PaymentProof", "", RequestBody.create("multipart/form-data".toMediaTypeOrNull(), ""))
+            builder.addFormDataPart(
+                "PaymentProof",
+                file.name,
+                RequestBody.create("multipart/form-data".toMediaTypeOrNull(), file)
+            )
+        } catch (e: Exception) {
+            builder.addFormDataPart(
+                "PaymentProof",
+                "",
+                RequestBody.create("multipart/form-data".toMediaTypeOrNull(), "")
+            )
             e.printStackTrace()
         }
 
         var requestBody = builder.build()
         Log.e("payload--->", requestBody.toString())
 
-        apis =  ApiClient().service // UploadNetworkClient.retrofitInstance!!.create(Apis::class.java)
-        val call : Call<ResponseLogin> = apis.customerCreate(requestBody).apply {
-            enqueue(object : Callback<ResponseLogin>{
-                override fun onResponse(call: Call<ResponseLogin>, response: Response<ResponseLogin>) {
+        apis =
+            ApiClient().service // UploadNetworkClient.retrofitInstance!!.create(Apis::class.java)
+        val call: Call<ResponseLogin> = apis.customerCreate(requestBody).apply {
+            enqueue(object : Callback<ResponseLogin> {
+                override fun onResponse(
+                    call: Call<ResponseLogin>,
+                    response: Response<ResponseLogin>
+                ) {
                     try {
-                            if (response.isSuccessful){
+                        if (response.isSuccessful) {
+                            Global.hideDialog()
                             Log.d("responseSuccess==>", response.body().toString())
                             var responseResult = response.body()
                             if (responseResult?.status == 200) {
                                 Log.d("responseResult===>", responseResult.message)
-                                Toast.makeText(this@AddClientActivity, "Successful", Toast.LENGTH_SHORT).show()
-                               /* var intent = Intent(this@AddClientActivity, DashBoardFragment::class.java)
-                                startActivity(intent)*/
-
-                                onBackPressed()
-                            }else{
-                                Toast.makeText(this@AddClientActivity, responseResult?.message, Toast.LENGTH_SHORT).show()
+                                Toasty.success(
+                                    this@AddClientActivity,
+                                    "Successful",
+                                    Toasty.LENGTH_SHORT
+                                ).show()
+                                /* var intent = Intent(this@AddClientActivity, DashBoardFragment::class.java)
+                                 startActivity(intent)*/
+                                finish()
+                                // onBackPressed()
+                            } else {
+                                Toasty.error(
+                                    this@AddClientActivity,
+                                    responseResult?.message!!,
+                                    Toasty.LENGTH_SHORT
+                                ).show()
                             }
 
-                        }else{
+                        } else {
                             Log.d("responseError==>", response.message())
-                            Toast.makeText(this@AddClientActivity, "Something Wrong!", Toast.LENGTH_SHORT).show()
+                            Toasty.error(
+                                this@AddClientActivity,
+                                "Something Wrong!",
+                                Toasty.LENGTH_SHORT
+                            ).show()
                         }
 
-                    }catch (e: Exception){
+                    } catch (e: Exception) {
+                        Global.hideDialog()
                         e.printStackTrace()
                     }
                 }
 
                 override fun onFailure(call: Call<ResponseLogin>, t: Throwable) {
-                    Toast.makeText(this@AddClientActivity, t.message, Toast.LENGTH_SHORT).show()
+                    Global.hideDialog()
+                    Toasty.error(this@AddClientActivity, t.message!!, Toasty.LENGTH_SHORT).show()
                 }
 
             })
@@ -148,12 +245,13 @@ class AddClientActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        when(requestCode){
+        when (requestCode) {
             RESULT_LOAD_IMAGE -> if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
                 val extras: Bundle? = data?.getExtras()
                 val selectedImage: Uri? = data!!.data
                 val filePathColumn = arrayOf(MediaStore.Images.Media.DATA)
-                val cursor: Cursor? = contentResolver.query(selectedImage!!, filePathColumn, null, null, null)
+                val cursor: Cursor? =
+                    contentResolver.query(selectedImage!!, filePathColumn, null, null, null)
                 cursor?.moveToFirst()
                 val columnIndex: Int = cursor!!.getColumnIndex(filePathColumn[0])
                 picturePath = cursor.getString(columnIndex)
@@ -171,10 +269,14 @@ class AddClientActivity : AppCompatActivity() {
     //todo set permission for image...
     private fun checkAndRequestPermissions(): Boolean {
         val camera = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-        val wtite = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        val read = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+        val wtite =
+            ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        val read =
+            ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
         val listPermissionsNeeded: MutableList<String> = ArrayList()
-        if (wtite != PackageManager.PERMISSION_GRANTED) { listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE) }
+        if (wtite != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        }
         if (camera != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(Manifest.permission.CAMERA)
         }
@@ -182,14 +284,22 @@ class AddClientActivity : AppCompatActivity() {
             listPermissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE)
         }
         if (!listPermissionsNeeded.isEmpty()) {
-            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toTypedArray(), REQUEST_ID_MULTIPLE_PERMISSIONS)
+            ActivityCompat.requestPermissions(
+                this,
+                listPermissionsNeeded.toTypedArray(),
+                REQUEST_ID_MULTIPLE_PERMISSIONS
+            )
             return false
         }
         return true
     }
 
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         Log.d("in fragment on request", "Permission callback called-------")
         when (requestCode) {

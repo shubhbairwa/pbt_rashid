@@ -4,6 +4,7 @@ import com.paybacktraders.paybacktraders.api.ApiClient
 import com.paybacktraders.paybacktraders.apihelper.Resource
 import com.paybacktraders.paybacktraders.apihelper.safeCall
 import com.paybacktraders.paybacktraders.model.model.apirequestbody.BodyAddDistributor
+import com.paybacktraders.paybacktraders.model.model.apirequestbody.BodyClientStatus
 import com.paybacktraders.paybacktraders.model.model.apiresponse.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -42,6 +43,13 @@ class DefaultMainRepositories : MainRepos {
     override suspend fun addDistributor(data: BodyAddDistributor)= withContext(Dispatchers.IO){
         safeCall {
             val response = ApiClient().service.addDistributor(data)
+            Resource.Success(response.body()!!)
+        }
+    }
+
+    override suspend fun updateCustomerStatus(data: BodyClientStatus)= withContext(Dispatchers.IO){
+        safeCall {
+            val response = ApiClient().service.customerApproval(data)
             Resource.Success(response.body()!!)
         }
     }

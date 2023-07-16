@@ -14,6 +14,8 @@ object Global {
     fun showDialog(context: Activity) {
         dialog = Dialog(context)
         val view = context.layoutInflater.inflate(R.layout.dialog_fullscreen, null, false)
+        dialog.getWindow()?.setBackgroundDrawableResource(R.color.transparent);
+
         dialog.setContentView(view)
         dialog.setCancelable(false)
         dialog.show()
@@ -24,7 +26,14 @@ object Global {
         dialog.dismiss()
     }
 
-    const val BASE_URL = "http://45.132.241.50:8000/"
+   // const val BASE_URL = "http://45.132.241.50:8001"
+
+/********TESTMOODEURL**********/
+    const val BASE_URL = "https://paybackbytrades.in:8002/"
+
+    /********LIVEMODEURL**********/
+
+    //  const val BASE_URL = "https://paybackbytrades.in:8000/"
 
     /**
     "id": 1,
@@ -61,6 +70,8 @@ object Global {
     const val PAYLOAD_EMPLOYEE_ID="EmployeeId"
     const val PAYLOAD_ID="id"
     const val PAYLOAD_TYPE="Type"
+    const val PAYLOAD_FROM_DATE="FromDate"
+    const val PAYLOAD_TO_DATE="ToDate"
 
     const val MASTER_DIST_STRING="Master Distributor"
     const val DISTRIBUTOR_STRING="Distributor"

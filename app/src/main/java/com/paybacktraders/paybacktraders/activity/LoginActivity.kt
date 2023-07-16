@@ -44,8 +44,8 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setUpViewModel()
-        binding.etUserName.setText("1234567890")
-        binding.etPassword.setText("admin@123")
+//        binding.etUserName.setText("1234567890")
+//        binding.etPassword.setText("admin@123")
         //Global.showDialog(this)
 //        CoroutineScope(Dispatchers.Main).launch {
 //            delay(2000)

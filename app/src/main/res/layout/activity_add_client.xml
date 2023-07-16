@@ -26,7 +26,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#009D48"
+                android:background="@color/accentBlue"
                 android:orientation="horizontal"
                 android:padding="10dp">
 
@@ -316,7 +316,7 @@
                                 android:id="@+id/btnChooseFile"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:backgroundTint="@color/green_aap"
+                                android:backgroundTint="@color/accentBlue"
                                 android:text="Choose File" />
 
                             <com.google.android.material.textfield.TextInputLayout
@@ -408,7 +408,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="right|end"
                         android:layout_margin="5dp"
-                        android:backgroundTint="@color/green_aap"
+                        android:backgroundTint="@color/accentBlue"
                         android:text="Save"
                         android:textAllCaps="false">
 
@@ -424,7 +424,7 @@
                         android:layout_weight="1"
                         android:text="Clear"
                         android:textAllCaps="false"
-                        android:textColor="#009D48">
+                        android:textColor="@color/accentBlue">
 
                     </Button>
 

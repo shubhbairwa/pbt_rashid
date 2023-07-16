@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.paybacktraders.paybacktraders.R
+import com.paybacktraders.paybacktraders.activity.AddClientActivity
 import com.paybacktraders.paybacktraders.activity.AdminActivity
 import com.paybacktraders.paybacktraders.activity.MasterDistributorActivity
 import com.paybacktraders.paybacktraders.adapters.ProductAdapter
@@ -86,6 +87,14 @@ class ProductFragment : Fragment() {
 
 
         setUpRecyclerView()
+
+        productAdapter.setOnAddClientItemClickListener{ data->
+            Intent(requireActivity(), AddClientActivity::class.java).also {
+                it.putExtra(Global.ID,data.id)
+                startActivity(it)
+            }
+        }
+
         productAdapter.setOnItemClickListener {
             /*Create an ACTION_SEND Intent*/
             /*Create an ACTION_SEND Intent*/

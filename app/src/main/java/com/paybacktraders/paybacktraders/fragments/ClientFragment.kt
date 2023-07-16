@@ -1,11 +1,13 @@
 package com.paybacktraders.paybacktraders.fragments
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.paybacktraders.paybacktraders.R
 import com.paybacktraders.paybacktraders.activity.AdminActivity
@@ -14,6 +16,7 @@ import com.paybacktraders.paybacktraders.adapters.ClientAdapter
 import com.paybacktraders.paybacktraders.apihelper.Event
 import com.paybacktraders.paybacktraders.databinding.FragmentClientBinding
 import com.paybacktraders.paybacktraders.global.Global
+import com.paybacktraders.paybacktraders.model.model.apirequestbody.BodyClientStatus
 import com.paybacktraders.paybacktraders.viewmodel.MainViewModel
 import com.pixplicity.easyprefs.library.Prefs
 import es.dmoral.toasty.Toasty
@@ -102,6 +105,8 @@ class ClientFragment : Fragment() {
         }else{
             hashMap[Global.PAYLOAD_EMPLOYEE_ID] = Prefs.getInt(Global.ID)
             hashMap[Global.PAYLOAD_TYPE] = "Connect"
+            hashMap[Global.PAYLOAD_FROM_DATE] = ""
+            hashMap[Global.PAYLOAD_TO_DATE] = ""
 
             viewModel.getClientALlFilter(hashMap)
             subscribeToFilterObserver()
@@ -112,6 +117,65 @@ class ClientFragment : Fragment() {
         setUpRecyclerView()
 
 
+        announcementAdapter.setOnItemClickListener {
+            if (it.ConnectionStatus.equals("Connect", ignoreCase = true)) {
+                Toasty.success(requireContext(), "Already Connected", Toasty.LENGTH_SHORT).show()
+            } else {
+                if (Prefs.getString(Global.Role).equals(Global.ADMIN_STRING)) {
+                    val alert = AlertDialog.Builder(requireContext())
+                    alert.setTitle("Are you sure...You want to change the status?")
+                    alert.setPositiveButton(
+                        "yes",
+                        DialogInterface.OnClickListener { dialog, which ->
+                            viewModel.updateCustomerStatus(
+                                BodyClientStatus(
+                                    EmployeeId = Prefs.getInt(Global.ID),
+                                    CustomerId = it.id,
+                                    Status = "Approved",
+                                    Remarks = "${it.FullName} approved by ${Prefs.getString(Global.FullName)}"
+                                )
+                            )
+                            SubscribeToStatus()
+
+                        })
+                    alert.setNegativeButton("No", DialogInterface.OnClickListener { dialog, which ->
+                        //  Toasty.warning(requireContext(), "NO", Toasty.LENGTH_SHORT).show()
+
+                    })
+                    alert.show()
+
+                } else {
+                    Toasty.warning(requireContext(), "Not Authorized", Toasty.LENGTH_SHORT).show()
+                }
+            }
+
+
+        }
+
+
+    }
+
+    private fun SubscribeToStatus() {
+        viewModel.updateCustomerStatus.observe(viewLifecycleOwner, Event.EventObserver(
+            onError = {
+                Global.hideDialog()
+                Toasty.error(requireContext(), it).show()
+                Log.e(ClientFragment.TAG, "SubscribeToStatus:$it ",)
+            }, onLoading = {
+                Global.showDialog(requireActivity())
+
+            }, {
+                Global.hideDialog()
+                //  Toasty.success(requireContext(),it)
+                if (it.status.equals(200)) {
+                    Toasty.success(requireContext(), it.message, Toasty.LENGTH_SHORT).show()
+
+                } else {
+                    Toasty.error(requireContext(), it.message).show()
+                }
+
+            }
+        ))
     }
 
     private fun setUpRecyclerView() = binding?.rvClientFragment?.apply {

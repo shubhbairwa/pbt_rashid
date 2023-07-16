@@ -4,6 +4,7 @@ package com.paybacktraders.paybacktraders.adapters
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.AdapterView.OnItemClickListener
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -12,14 +13,17 @@ import com.paybacktraders.paybacktraders.R
 import com.paybacktraders.paybacktraders.databinding.ClientItemListLayoutBinding
 import com.paybacktraders.paybacktraders.global.Global
 import com.paybacktraders.paybacktraders.model.model.apiresponse.DataCLient
+import com.paybacktraders.paybacktraders.model.model.apiresponse.DataProduct
 
 
 class ClientAdapter :
     RecyclerView.Adapter<ClientAdapter.AnnouncementViewHolder>(
     ) {
 
-
-
+    private var onItemClickListener: ((DataCLient) -> Unit)? = null
+    fun setOnItemClickListener(listener: (DataCLient) -> Unit) {
+        onItemClickListener = listener
+    }
 
 
     private val differCallback = object :
@@ -50,7 +54,11 @@ class ClientAdapter :
             binding.apply {
                 tvCustomerName.text = currentAnnouncement.FullName
                 tvCustomermobile.text = currentAnnouncement.Mobile
-
+                tvCustomerStatus.setOnClickListener {
+                    onItemClickListener?.let { click->
+                        click(currentAnnouncement)
+                    }
+                }
 
                 tvCustomerStatus.text = currentAnnouncement.ConnectionStatus
 
@@ -62,6 +70,8 @@ class ClientAdapter :
                         itemView.context.resources.getDrawable(R.drawable.background_approved_client)
 
                 }
+
+
 
 
 
