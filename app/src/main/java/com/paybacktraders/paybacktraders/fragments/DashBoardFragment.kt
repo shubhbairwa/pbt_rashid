@@ -5,11 +5,13 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.paybacktraders.paybacktraders.R
 import com.paybacktraders.paybacktraders.activity.AdminActivity
 import com.paybacktraders.paybacktraders.activity.MasterDistributorActivity
+import com.paybacktraders.paybacktraders.activity.NavigationDrawerActivity
 import com.paybacktraders.paybacktraders.adapters.ClientAdapter
 import com.paybacktraders.paybacktraders.apihelper.Event
 import com.paybacktraders.paybacktraders.databinding.FragmentDashBoardBinding
@@ -36,16 +38,17 @@ class DashBoardFragment : Fragment(R.layout.fragment_dash_board) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        where = activity?.intent?.getStringExtra(Global.INTENT_WHERE).toString()
+        where = Prefs.getString(Global.INTENT_WHERE)
+        Toast.makeText(requireContext(),where,Toast.LENGTH_SHORT).show()
         Log.e(TAG, "onViewCreated: $where")
 
         /***check for type of user so that we assign viewmodel according to their corresponding activity**/
         viewModel = if (where.equals("admin", ignoreCase = true)) {
             Log.e(TAG, "onViewCreated: utut")
-            (activity as AdminActivity).viewModel
+            (activity as NavigationDrawerActivity).viewModel
         } else {
             Log.e(TAG, "onViewCreated: master")
-            (activity as MasterDistributorActivity).viewModel
+            (activity as NavigationDrawerActivity).viewModel
         }
         _binding = FragmentDashBoardBinding.bind(view)
 
@@ -137,7 +140,7 @@ class DashBoardFragment : Fragment(R.layout.fragment_dash_board) {
                         tvClientCounter.text = it.data[0].totalCustomer.toString()
                         tvDistributorCounter.text = it.data[0].totalDistributor.toString()
                         tvProductCounter.text = it.data[0].totalProduct.toString()
-                        tvWalletCounter.text = "USD ${it.data[0].totalAmountInWallet.toString()}"
+                        tvWalletCounter.text = "${'$'} ${it.data[0].totalAmountInWallet.toString()}"
                     }
 
                 } else {

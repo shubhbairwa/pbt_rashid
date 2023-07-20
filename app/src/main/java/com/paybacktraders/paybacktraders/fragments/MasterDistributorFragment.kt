@@ -9,15 +9,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.paybacktraders.paybacktraders.R
-import com.paybacktraders.paybacktraders.activity.AddDistributorActivity
-import com.paybacktraders.paybacktraders.activity.AdminActivity
-import com.paybacktraders.paybacktraders.activity.MasterDistributorActivity
+import com.paybacktraders.paybacktraders.activity.*
 import com.paybacktraders.paybacktraders.adapters.MasterDistributorAdapter
 import com.paybacktraders.paybacktraders.apihelper.Event
 import com.paybacktraders.paybacktraders.databinding.FragmentMasterDistributorBinding
 import com.paybacktraders.paybacktraders.global.Global
 import com.paybacktraders.paybacktraders.model.model.apiresponse.DataEmployeeAll
 import com.paybacktraders.paybacktraders.viewmodel.MainViewModel
+import com.pixplicity.easyprefs.library.Prefs
 import es.dmoral.toasty.Toasty
 
 // TODO: Rename parameter arguments, choose names that match
@@ -60,16 +59,16 @@ class MasterDistributorFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        where = activity?.intent?.getStringExtra(Global.INTENT_WHERE).toString()
+        where = Prefs.getString(Global.INTENT_WHERE)
         Log.e(MasterDistributorFragment.TAG, "onViewCreated: $where")
 
         /***check for type of user so that we assign viewmodel according to their corresponding activity**/
         viewModel = if (where.equals("admin", ignoreCase = true)) {
             Log.e(MasterDistributorFragment.TAG, "onViewCreated: utut")
-            (activity as AdminActivity).viewModel
+            (activity as NavigationDrawerActivity).viewModel
         } else {
             Log.e(MasterDistributorFragment.TAG, "onViewCreated: master")
-            (activity as MasterDistributorActivity).viewModel
+            (activity as NavigationDrawerActivity).viewModel
         }
         _binding = FragmentMasterDistributorBinding.bind(view)
 
@@ -81,6 +80,17 @@ class MasterDistributorFragment : Fragment() {
         binding!!.addMasterDistributor.setOnClickListener {
             Intent(activity,AddDistributorActivity::class.java).also {
                 it.putExtra(Global.INTENT_WHERE,Global.MASTER_DIST_STRING)
+                startActivity(it)
+            }
+        }
+
+        masterDistributorAdapter.setOnItemClickListener {data->
+            val bundle=Bundle().apply {
+                putSerializable("dist",data)
+            }
+            Intent(activity, UpdateDistributorDetailsActivity::class.java).also {
+                it.putExtra(Global.INTENT_WHERE,Global.MASTER_DIST_STRING)
+                it.putExtra("dist",data)
                 startActivity(it)
             }
         }

@@ -3,6 +3,7 @@ package com.paybacktraders.paybacktraders.api
 
 import com.paybacktraders.paybacktraders.model.model.apirequestbody.BodyAddDistributor
 import com.paybacktraders.paybacktraders.model.model.apirequestbody.BodyClientStatus
+import com.paybacktraders.paybacktraders.model.model.apirequestbody.BodyUpdateDistributor
 import com.paybacktraders.paybacktraders.model.model.apiresponse.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -44,6 +45,10 @@ interface Apis {
     @POST("employee/create")
     @Headers("Content-Type: application/json; charset=UTF-8")
     suspend fun addDistributor(@Body data : BodyAddDistributor): Response<ResponseGlobal>
+
+    @POST("employee/update")
+    @Headers("Content-Type: application/json; charset=UTF-8")
+    suspend fun updateDistributor(@Body data : BodyUpdateDistributor): Response<ResponseGlobal>
 
     @GET("customer/all")
     @Headers("Content-Type: application/json; charset=UTF-8")

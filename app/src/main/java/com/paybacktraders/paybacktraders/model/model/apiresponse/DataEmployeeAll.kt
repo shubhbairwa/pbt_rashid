@@ -15,4 +15,4 @@ data class DataEmployeeAll(
     val UserName: String,
     val WalletAmount: String,
     val id: Int
-)
+):java.io.Serializable

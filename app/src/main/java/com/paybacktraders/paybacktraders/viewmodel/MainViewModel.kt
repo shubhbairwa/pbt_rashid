@@ -15,6 +15,7 @@ import com.paybacktraders.paybacktraders.api.Apis
 import com.paybacktraders.paybacktraders.apihelper.Event
 import com.paybacktraders.paybacktraders.model.model.apirequestbody.BodyAddDistributor
 import com.paybacktraders.paybacktraders.model.model.apirequestbody.BodyClientStatus
+import com.paybacktraders.paybacktraders.model.model.apirequestbody.BodyUpdateDistributor
 import com.paybacktraders.paybacktraders.model.model.apiresponse.*
 import com.paybacktraders.paybacktraders.repository.MainRepos
 import kotlinx.coroutines.CoroutineDispatcher
@@ -39,6 +40,9 @@ class MainViewModel(
     val employeeAll: LiveData<Event<Resource<ResponseEmployeeAll>>> = _employeeAll
     private val _addDist = MutableLiveData<Event<Resource<ResponseGlobal>>>()
     val addDist: LiveData<Event<Resource<ResponseGlobal>>> = _addDist
+
+    private val _updateDist = MutableLiveData<Event<Resource<ResponseGlobal>>>()
+    val updateDist: LiveData<Event<Resource<ResponseGlobal>>> = _updateDist
 
 
     private val _productAll = MutableLiveData<Event<Resource<ProductResponse>>>()
@@ -88,6 +92,14 @@ class MainViewModel(
         viewModelScope.launch(Dispatchers.Main) {
             val result = repos.addDistributor(data)
             _addDist.postValue(Event(result))
+        }
+    }
+
+    fun updateDistributor(data: BodyUpdateDistributor) {
+        _updateDist.postValue(Event(Resource.Loading()))
+        viewModelScope.launch(Dispatchers.Main) {
+            val result = repos.updateDistributor(data)
+            _updateDist.postValue(Event(result))
         }
     }
 

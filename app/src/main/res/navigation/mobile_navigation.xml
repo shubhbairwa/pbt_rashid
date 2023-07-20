@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@id/dashBoardFragment">
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.paybacktraders.paybacktraders.activity.ui.home.HomeFragment"
+        android:label="@string/my_profile"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/EnquiryFragment"
+        android:name="com.paybacktraders.paybacktraders.activity.ui.gallery.GalleryFragment"
+        android:label="@string/enquiry"
+        tools:layout="@layout/fragment_gallery" />
+
+    <fragment
+        android:id="@+id/financeFragment"
+        android:name="com.paybacktraders.paybacktraders.activity.ui.slideshow.SlideshowFragment"
+        android:label="@string/finance"
+        tools:layout="@layout/fragment_slideshow" />
+
+    <fragment
+        android:id="@+id/dashBoardFragment"
+        android:name="com.paybacktraders.paybacktraders.fragments.DashBoardFragment"
+        android:label="@string/dashboard"
+        tools:layout="@layout/fragment_dash_board" />
+    <fragment
+        android:id="@+id/masterDistributorFragment"
+        android:name="com.paybacktraders.paybacktraders.fragments.MasterDistributorFragment"
+        android:label="@string/master_distributor"
+        tools:layout="@layout/fragment_master_distributor" />
+    <fragment
+        android:id="@+id/clientFragment"
+        android:name="com.paybacktraders.paybacktraders.fragments.ClientFragment"
+        android:label="@string/client"
+        tools:layout="@layout/fragment_client" />
+    <fragment
+        android:id="@+id/productFragment"
+        android:name="com.paybacktraders.paybacktraders.fragments.ProductFragment"
+        android:label="@string/product"
+        tools:layout="@layout/fragment_product" />
+
+    <fragment
+        android:id="@+id/distributorFragment"
+        android:name="com.paybacktraders.paybacktraders.fragments.DistributorFragment"
+        android:label="@string/distributor"
+        tools:layout="@layout/fragment_distributor" />
+
+</navigation>

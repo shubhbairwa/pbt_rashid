@@ -29,6 +29,12 @@ class MasterDistributorAdapter :
 //        this.rvItemClickListener = rvItemClickListener
 //    }
 
+    private var onItemClickListener: ((DataEmployeeAll) -> Unit)? = null
+
+    fun setOnItemClickListener(listener: (DataEmployeeAll) -> Unit) {
+        onItemClickListener = listener
+    }
+
 
     private val differCallback = object :
         DiffUtil.ItemCallback<DataEmployeeAll>() {
@@ -63,8 +69,11 @@ class MasterDistributorAdapter :
                 tvRole.text = currentAnnouncement.Role.toString()
                 tvPassword.text = currentAnnouncement.Password.toString()
                 tvStatus.text = currentAnnouncement.Status
-
-
+                itemView.setOnClickListener {
+                    onItemClickListener?.let { click ->
+                        click(currentAnnouncement)
+                    }
+                }
 
 
             }
@@ -92,7 +101,6 @@ class MasterDistributorAdapter :
     override fun onBindViewHolder(holder: MasterDistributorViewHolder, position: Int) {
         val contest = masterDistributor[position]
         holder.bind(contest, position)
-
 
 
     }

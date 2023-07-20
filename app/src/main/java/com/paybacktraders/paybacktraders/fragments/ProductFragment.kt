@@ -13,6 +13,7 @@ import com.paybacktraders.paybacktraders.R
 import com.paybacktraders.paybacktraders.activity.AddClientActivity
 import com.paybacktraders.paybacktraders.activity.AdminActivity
 import com.paybacktraders.paybacktraders.activity.MasterDistributorActivity
+import com.paybacktraders.paybacktraders.activity.NavigationDrawerActivity
 import com.paybacktraders.paybacktraders.adapters.ProductAdapter
 import com.paybacktraders.paybacktraders.apihelper.Event
 import com.paybacktraders.paybacktraders.databinding.FragmentProductBinding
@@ -61,16 +62,16 @@ class ProductFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        where = activity?.intent?.getStringExtra(Global.INTENT_WHERE).toString()
+        where = Prefs.getString(Global.INTENT_WHERE)
         Log.e(ProductFragment.TAG, "onViewCreated: $where")
 
         /***check for type of user so that we assign viewmodel according to their corresponding activity**/
         viewModel = if (where.equals("admin", ignoreCase = true)) {
             Log.e(ProductFragment.TAG, "onViewCreated: utut")
-            (activity as AdminActivity).viewModel
+            (activity as NavigationDrawerActivity).viewModel
         } else {
             Log.e(ProductFragment.TAG, "onViewCreated: master")
-            (activity as MasterDistributorActivity).viewModel
+            (activity as NavigationDrawerActivity).viewModel
         }
         _binding = FragmentProductBinding.bind(view)
 

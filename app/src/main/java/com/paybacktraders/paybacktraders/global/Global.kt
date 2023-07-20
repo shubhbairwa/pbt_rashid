@@ -29,11 +29,11 @@ object Global {
    // const val BASE_URL = "http://45.132.241.50:8001"
 
 /********TESTMOODEURL**********/
-    const val BASE_URL = "https://paybackbytrades.in:8002/"
+   // const val BASE_URL = "https://paybackbytrades.in:8002/"
 
     /********LIVEMODEURL**********/
 
-    //  const val BASE_URL = "https://paybackbytrades.in:8000/"
+      const val BASE_URL = "https://paybackbytrades.in:8000/"
 
     /**
     "id": 1,

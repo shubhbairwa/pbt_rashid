@@ -4,4 +4,4 @@ data class ResponseEmployeeAll(
     val `data`: MutableList<DataEmployeeAll>,
     val message: String,
     val status: Int
-)
+):java.io.Serializable

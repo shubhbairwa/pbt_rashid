@@ -97,16 +97,22 @@ class LoginActivity : AppCompatActivity() {
                     Prefs.putString(Global.Datetime, it.data[0].Datetime)
                     Toasty.success(this,it.message,Toasty.LENGTH_SHORT).show()
                     // Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
+//                    Intent(this, NavigationDrawerActivity::class.java).also {
+//                        Prefs.putString(Global.INTENT_WHERE,"admin")
+//                     //   it.putExtra(Global.INTENT_WHERE,"admin")
+//                        startActivity(it)
+//                        finish()
+//                    }
 
                     if (it.data[0].Role.equals("Admin", ignoreCase = true)) {
-                        Intent(this, AdminActivity::class.java).also {
-                            it.putExtra(Global.INTENT_WHERE,"admin")
+                        Intent(this, NavigationDrawerActivity::class.java).also {
+                            Prefs.putString(Global.INTENT_WHERE,"admin")
                             startActivity(it)
                             finish()
                         }
                     } else {
-                        Intent(this, MasterDistributorActivity::class.java).also {
-                            it.putExtra(Global.INTENT_WHERE,"dist")
+                        Intent(this, NavigationDrawerActivity::class.java).also {
+                            Prefs.putString(Global.INTENT_WHERE,"dist")
                             startActivity(it)
                             finish()
                         }

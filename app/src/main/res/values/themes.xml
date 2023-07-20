@@ -40,5 +40,14 @@
         <item name="boxStrokeWidth">2dp</item>
     </style>
 
+    <style name="Theme.PayBackTraders.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.PayBackTraders.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.PayBackTraders.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
 
 </resources>
