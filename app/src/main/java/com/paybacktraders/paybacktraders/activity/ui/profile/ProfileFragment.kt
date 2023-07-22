@@ -24,6 +24,8 @@ import java.util.*
 
 class ProfileFragment : Fragment() {
 
+    //todo comments 22
+
     lateinit var binding: FragmentProfileBinding
     lateinit var viewModel: MainViewModel
 
