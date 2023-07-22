@@ -1,5 +1,6 @@
 package com.paybacktraders.paybacktraders.repository
 
+import com.google.gson.JsonObject
 import com.paybacktraders.paybacktraders.api.ApiClient
 import com.paybacktraders.paybacktraders.apihelper.Resource
 import com.paybacktraders.paybacktraders.apihelper.safeCall
@@ -129,6 +130,34 @@ class DefaultMainRepositories : MainRepos {
     override suspend fun getProductAll()= withContext(Dispatchers.IO){
         safeCall {
             val response = ApiClient().service.getProductALl()
+            Resource.Success(response.body()!!)
+        }
+    }
+
+    override suspend fun getForgotPasswordEmail(data: JsonObject)= withContext(Dispatchers.IO){
+        safeCall {
+            val response = ApiClient().service.getForgotPasswordEmail(data)
+            Resource.Success(response.body()!!)
+        }
+    }
+
+    override suspend fun getOtpVerify(data: JsonObject)= withContext(Dispatchers.IO){
+        safeCall {
+            val response = ApiClient().service.getOtpVerify(data)
+            Resource.Success(response.body()!!)
+        }
+    }
+
+    override suspend fun getPasswordChange(data: JsonObject)= withContext(Dispatchers.IO){
+        safeCall {
+            val response = ApiClient().service.getPasswordChange(data)
+            Resource.Success(response.body()!!)
+        }
+    }
+
+    override suspend fun getProfileDetailOneApi(data: JsonObject)= withContext(Dispatchers.IO){
+        safeCall {
+            val response = ApiClient().service.getProfileDetailOneApi(data)
             Resource.Success(response.body()!!)
         }
     }

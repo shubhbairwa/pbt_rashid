@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.paybacktraders.paybacktraders.R
 import com.paybacktraders.paybacktraders.databinding.FragmentSlideshowBinding
 
-class FinanceFragment : Fragment() {
+class SlideshowFragment : Fragment() {
 
     private var _binding: FragmentSlideshowBinding? = null
 

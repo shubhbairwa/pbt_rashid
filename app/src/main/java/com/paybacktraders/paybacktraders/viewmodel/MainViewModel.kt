@@ -10,6 +10,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.google.gson.JsonObject
 import com.paybacktraders.paybacktraders.apihelper.Resource
 import com.paybacktraders.paybacktraders.api.Apis
 import com.paybacktraders.paybacktraders.apihelper.Event
@@ -72,10 +73,17 @@ class MainViewModel(
     private val _clientFilter = MutableLiveData<Event<Resource<ResponseClient>>>()
     val clientFilter: LiveData<Event<Resource<ResponseClient>>> = _clientFilter
 
+    private val _forgotPasswordEmail = MutableLiveData<Event<Resource<ResponseGlobal>>>()
+    val forgotPasswordEmail: LiveData<Event<Resource<ResponseGlobal>>> = _forgotPasswordEmail
 
+    private val _otpVerify = MutableLiveData<Event<Resource<ResponseGlobal>>>()
+    val otpVerify: LiveData<Event<Resource<ResponseGlobal>>> = _otpVerify
 
+    private val _passwordChange = MutableLiveData<Event<Resource<ResponseGlobal>>>()
+    val passwordChange: LiveData<Event<Resource<ResponseGlobal>>> = _passwordChange
 
-
+    private val _profileDeatil = MutableLiveData<Event<Resource<ResponseEmployeeAll>>>()
+    val profileDeatil: LiveData<Event<Resource<ResponseEmployeeAll>>> = _profileDeatil
 
 
     fun doLogin(data: HashMap<String, Any>) {
@@ -210,6 +218,38 @@ class MainViewModel(
         }
     }
 
+    //todo forgot password vm.
+    fun getForgotPasswordEmail(data: JsonObject) {
+        _forgotPasswordEmail.postValue(Event(Resource.Loading()))
+        viewModelScope.launch(Dispatchers.Main) {
+            val result = repos.getForgotPasswordEmail(data)
+            _forgotPasswordEmail.postValue(Event(result))
+        }
+    }
+
+    fun getOtpVerify(data: JsonObject) {
+        _otpVerify.postValue(Event(Resource.Loading()))
+        viewModelScope.launch(Dispatchers.Main) {
+            val result = repos.getOtpVerify(data)
+            _otpVerify.postValue(Event(result))
+        }
+    }
+
+    fun getPasswordChange(data: JsonObject) {
+        _passwordChange.postValue(Event(Resource.Loading()))
+        viewModelScope.launch(Dispatchers.Main) {
+            val result = repos.getPasswordChange(data)
+            _passwordChange.postValue(Event(result))
+        }
+    }
+
+    fun getProfileDetailOneApi(data: JsonObject) {
+        _profileDeatil.postValue(Event(Resource.Loading()))
+        viewModelScope.launch(Dispatchers.Main) {
+            val result = repos.getProfileDetailOneApi(data)
+            _profileDeatil.postValue(Event(result))
+        }
+    }
 
 
 

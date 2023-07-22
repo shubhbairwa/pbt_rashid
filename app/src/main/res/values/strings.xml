@@ -43,4 +43,13 @@
     <string name="date">Date</string>
     <string name="cross_button">Cross Button</string>
     <string name="remarks_heading">Remarks</string>
+    <string name="remember_me">Remember me</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="forgot_paswrd">Forgot Password</string>
+    <string name="enter_email_string">Enter your Email is below and we will send you \n a one time password.</string>
+    <string name="enter_otp_string">Enter the OTP sent to the Provided \n email address.</string>
+    <string name="otp_verification">OTP Verification</string>
+    <string name="resend">Resend</string>
+    <string name="enter_email_id">Enter Email ID</string>
+
 </resources>

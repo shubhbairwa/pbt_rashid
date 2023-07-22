@@ -1,6 +1,7 @@
 package com.paybacktraders.paybacktraders.api
 
 
+import com.google.gson.JsonObject
 import com.paybacktraders.paybacktraders.model.model.apirequestbody.*
 import com.paybacktraders.paybacktraders.model.model.apiresponse.*
 import okhttp3.MultipartBody
@@ -103,6 +104,18 @@ interface Apis {
 
 
 
+    @POST("employee/forget_password")
+    suspend fun getForgotPasswordEmail(@Body jsonObject: JsonObject): Response<ResponseGlobal>
+
+    @POST("employee/verify_otp")
+    suspend fun getOtpVerify(@Body jsonObject: JsonObject): Response<ResponseGlobal>
+
+    @POST("employee/change_password")
+    suspend fun getPasswordChange(@Body jsonObject: JsonObject): Response<ResponseGlobal>
+
+    @POST("employee/one")
+    @Headers("Content-Type: application/json; charset=UTF-8")
+    suspend fun getProfileDetailOneApi(@Body jsonObject: JsonObject): Response<ResponseEmployeeAll>
 
 
 

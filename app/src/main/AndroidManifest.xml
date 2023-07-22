@@ -39,6 +39,21 @@
                 android:value="" />
         </activity>
         <activity
+            android:name=".activity.ui.profile.EditProfileActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".activity.ui.forgot.ForgotPasswordActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+
+        <activity
             android:name=".activity.NavigationDrawerActivity"
             android:exported="false"
             android:label="@string/title_activity_navigation_drawer"

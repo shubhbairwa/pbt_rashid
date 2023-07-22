@@ -39,6 +39,7 @@ class ProfileFragment : Fragment() {
         _binding = null
     }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
