@@ -102,6 +102,13 @@ dependencies {
 
     //progressbar
     implementation 'com.github.ybq:Android-SpinKit:1.4.0'
+
+    //todo otp text view
+    implementation 'com.github.aabhasr1:OtpView:v1.1.2-ktx'
+    
+    //todo circular image view
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+
 }
 
 kapt {

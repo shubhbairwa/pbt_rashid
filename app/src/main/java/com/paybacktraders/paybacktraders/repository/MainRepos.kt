@@ -1,6 +1,7 @@
 package com.paybacktraders.paybacktraders.repository
 
 
+import com.google.gson.JsonObject
 import com.paybacktraders.paybacktraders.apihelper.Resource
 import com.paybacktraders.paybacktraders.model.model.apirequestbody.BodyAddDistributor
 import com.paybacktraders.paybacktraders.model.model.apirequestbody.BodyClientStatus
@@ -23,6 +24,10 @@ interface MainRepos {
     suspend fun getClientAll(): Resource<ResponseClient>
     suspend fun getEmployeeAll(): Resource<ResponseEmployeeAll>
     suspend fun getProductAll(): Resource<ProductResponse>
+    suspend fun getForgotPasswordEmail(data:JsonObject): Resource<ResponseGlobal>
+    suspend fun getOtpVerify(data:JsonObject): Resource<ResponseGlobal>
+    suspend fun getPasswordChange(data:JsonObject): Resource<ResponseGlobal>
+    suspend fun getProfileDetailOneApi(data:JsonObject): Resource<ResponseEmployeeAll>
 
 
 

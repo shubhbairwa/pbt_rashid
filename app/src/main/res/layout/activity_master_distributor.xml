@@ -15,9 +15,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:title="DashBoard"
         app:titleTextColor="@color/white"
-        android:background="@color/purple_500"
-
-        >
+        android:background="@color/purple_500">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

@@ -37,8 +37,7 @@ class UpdateDistributorDetailsActivity : AppCompatActivity() {
         val dispatchers: CoroutineDispatcher = Dispatchers.Main
         val mainRepos = DefaultMainRepositories() as MainRepos
         val fanxApi: Apis = ApiClient().service
-        val viewModelProviderfactory =
-            MainViewModelProvider(application, mainRepos, dispatchers, fanxApi)
+        val viewModelProviderfactory = MainViewModelProvider(application, mainRepos, dispatchers, fanxApi)
         viewModel = ViewModelProvider(this, viewModelProviderfactory)[MainViewModel::class.java]
     }
 
@@ -48,8 +47,7 @@ class UpdateDistributorDetailsActivity : AppCompatActivity() {
         binding = ActivityUpdateDistributorDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setUpViewModel()
-        dataEmployeeAll =
-            intent.getSerializableExtra("dist") as DataEmployeeAll
+        dataEmployeeAll = intent.getSerializableExtra("dist") as DataEmployeeAll
         autoFillDataComingFromDistributorItem(dataEmployeeAll!!)
 
         where = intent.getStringExtra(Global.INTENT_WHERE).toString()
@@ -67,14 +65,7 @@ class UpdateDistributorDetailsActivity : AppCompatActivity() {
         }
 
         binding.btnSave.setOnClickListener {
-            if (confirmInput(
-                    binding.etEnterFullName,
-                    binding.etPassword,
-                    binding.etEnterEmail,
-                    binding.etEnterPhone,
-                    binding.etDeliveryAddress
-                )
-            ) {
+            if (confirmInput(binding.etEnterFullName, binding.etPassword, binding.etEnterEmail, binding.etEnterPhone, binding.etDeliveryAddress)) {
                 binding.apply {
                     val bodyAddDistributor = BodyUpdateDistributor(
                         CreatedBy = Prefs.getInt(Global.ID),
@@ -149,10 +140,7 @@ class UpdateDistributorDetailsActivity : AppCompatActivity() {
     }
 
 
-    private fun confirmInput(
-        fullName: TextInputEditText, enterPass: TextInputEditText, enterEmail: TextInputEditText,
-        enterPhone: TextInputEditText, enterDelivery: TextInputEditText
-    ): Boolean {
+    private fun confirmInput(fullName: TextInputEditText, enterPass: TextInputEditText, enterEmail: TextInputEditText, enterPhone: TextInputEditText, enterDelivery: TextInputEditText): Boolean {
         if (fullName.text!!.isEmpty()) {
             fullName.requestFocus()
             fullName.error = "invalid"

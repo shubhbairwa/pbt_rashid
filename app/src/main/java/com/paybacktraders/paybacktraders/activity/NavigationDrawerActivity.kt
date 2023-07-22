@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -68,7 +69,7 @@ class NavigationDrawerActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                com.paybacktraders.paybacktraders.R.id.profileFragment,
+                R.id.profileFragment,
                 R.id.EnquiryFragment,
                 R.id.financeFragment,
                 R.id.dashBoardFragment,
@@ -126,4 +127,25 @@ class NavigationDrawerActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content_navigation_drawer)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
+
+    // Function to switch between fragments
+    fun switchFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.nav_host_fragment_content_navigation_drawer, fragment)
+            .addToBackStack(null) // Optional: Add the fragment transaction to the back stack
+            .commit()
+    }
+
+    // Function to switch between fragments with data parse..
+    fun switchFragmentWithData(fragment: Fragment, dataToSend: String) {
+        val args = Bundle()
+        args.putString("key_data", dataToSend)
+        fragment.arguments = args
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.nav_host_fragment_content_navigation_drawer, fragment)
+            .addToBackStack(null) // Optional: Add the fragment transaction to the back stack
+            .commit()
+    }
+
 }

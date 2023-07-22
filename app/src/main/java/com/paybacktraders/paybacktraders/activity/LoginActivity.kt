@@ -11,6 +11,7 @@ import android.widget.Toast.makeText
 import androidx.lifecycle.ViewModelProvider
 import com.paybacktraders.paybacktraders.PayBackTradersApplication
 import com.paybacktraders.paybacktraders.R
+import com.paybacktraders.paybacktraders.activity.ui.forgot.ForgotPasswordActivity
 import com.paybacktraders.paybacktraders.api.ApiClient
 import com.paybacktraders.paybacktraders.api.Apis
 import com.paybacktraders.paybacktraders.apihelper.Event
@@ -28,7 +29,6 @@ class LoginActivity : AppCompatActivity() {
     lateinit var binding: ActivityLoginBinding
     var selectedItem = ""
     lateinit var viewModel: MainViewModel
-
 
     private fun setUpViewModel() {
         val dispatchers: CoroutineDispatcher = Dispatchers.Main
@@ -55,21 +55,46 @@ class LoginActivity : AppCompatActivity() {
 
         setupUserTypeDropDown()
 
+        //todo set remember me check here..
+        binding.rememberMeCheck?.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked){
+                Prefs.putString(Global.REMEMBER_ME, "CheckIn")
+            }else{
+                Prefs.putString(Global.REMEMBER_ME, "CheckOut")
+            }
+        }
 
+        if (Prefs.getString(Global.REMEMBER_ME, "CheckOut") == "CheckIn"){
+            binding.etUserName.setText(Prefs.getString(Global.Email))
+            binding.etPassword.setText(Prefs.getString(Global.Password))
+            binding.rememberMeCheck?.isChecked = true
+        }else{
+            binding.etUserName.setText("")
+            binding.etPassword.setText("")
+            binding.rememberMeCheck?.isChecked = false
+        }
+
+        //todo click on forgot password..
+        binding.tvForgotPassword?.setOnClickListener {
+            Intent(this, ForgotPasswordActivity::class.java).also {
+                startActivity(it)
+            }
+        }
+
+        //todo login button click.
         binding.loginButton.setOnClickListener {
             var hashMap = HashMap<String, Any>()
             hashMap.put("UserName", binding.etUserName.text.toString())
             hashMap.put("Password", binding.etPassword.text.toString())
             viewModel.doLogin(hashMap)
 
-//
-//
-
         }
 
         subscribeToObserver()
+
     }
 
+    //todo bind obsever.
     private fun subscribeToObserver() {
         viewModel.login.observe(this, Event.EventObserver(
             onError = {
@@ -96,6 +121,12 @@ class LoginActivity : AppCompatActivity() {
                     Prefs.putString(Global.WalletAmount, it.data[0].WalletAmount)
                     Prefs.putString(Global.Datetime, it.data[0].Datetime)
                     Toasty.success(this,it.message,Toasty.LENGTH_SHORT).show()
+
+                    if (binding.rememberMeCheck!!.isChecked){
+                        Prefs.putString(Global.Email, it.data[0].Email)
+                        Prefs.putString(Global.Password, it.data[0].Password)
+                        Prefs.putString(Global.REMEMBER_ME, "CheckIn")
+                    }
                     // Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
 //                    Intent(this, NavigationDrawerActivity::class.java).also {
 //                        Prefs.putString(Global.INTENT_WHERE,"admin")

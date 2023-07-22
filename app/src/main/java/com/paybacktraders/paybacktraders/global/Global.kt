@@ -2,6 +2,11 @@ package com.paybacktraders.paybacktraders.global
 
 import android.app.Activity
 import android.app.Dialog
+import android.content.Context
+import android.os.Bundle
+import android.widget.EditText
+import android.widget.Toast
+import androidx.fragment.app.Fragment
 import com.paybacktraders.paybacktraders.R
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
@@ -33,7 +38,7 @@ object Global {
 
     /********LIVEMODEURL**********/
 
-      const val BASE_URL = "https://paybackbytrades.in:8000/"
+      const val BASE_URL = "https://paybackbytrades.in:8002/"
 
     /**
     "id": 1,
@@ -76,6 +81,7 @@ object Global {
     const val MASTER_DIST_STRING="Master Distributor"
     const val DISTRIBUTOR_STRING="Distributor"
     const val ADMIN_STRING="Admin"
+    const val REMEMBER_ME="_RememberMe"
 
 
     fun convertToCustomFormat(dateStr: String?): String {
@@ -92,6 +98,16 @@ object Global {
         return string.substringBeforeLast("T")
 
     }
+
+
+    fun  isPassMatch(context: Context, text1: EditText, text2: String):Boolean{
+        return if(text1.text.toString() != text2){
+            Toast.makeText(context,"Password does not match", Toast.LENGTH_SHORT).show()
+            false
+        } else
+            true
+    }
+
 
 
 }
