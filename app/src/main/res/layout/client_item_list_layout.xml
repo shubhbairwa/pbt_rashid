@@ -123,6 +123,37 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipPaymentScreenshot"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Attachment"
+                    android:backgroundTint="#fff"
+
+                    app:chipStrokeWidth="0.5dp"
+                    app:chipStrokeColor="@color/purple_500"
+
+                    />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipRemarks"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Remarks"
+                    android:layout_marginStart="8dp"
+                    android:textColor="@color/white"
+                    android:backgroundTint="@color/purple_500"
+
+                    />
+
+            </LinearLayout>
+
+
+
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

@@ -16,14 +16,22 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.textfield.TextInputEditText
 import com.paybacktraders.paybacktraders.api.ApiClient
 import com.paybacktraders.paybacktraders.api.Apis
+import com.paybacktraders.paybacktraders.apihelper.Event
 import com.paybacktraders.paybacktraders.databinding.ActivityAddClientBinding
 import com.paybacktraders.paybacktraders.global.Global
 import com.paybacktraders.paybacktraders.model.model.apiresponse.ResponseLogin
+import com.paybacktraders.paybacktraders.repository.DefaultMainRepositories
+import com.paybacktraders.paybacktraders.repository.MainRepos
+import com.paybacktraders.paybacktraders.viewmodel.MainViewModel
+import com.paybacktraders.paybacktraders.viewmodel.MainViewModelProvider
 import com.pixplicity.easyprefs.library.Prefs
 import es.dmoral.toasty.Toasty
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -36,20 +44,35 @@ import java.util.*
 
 class AddClientActivity : AppCompatActivity() {
     lateinit var binding: ActivityAddClientBinding
+    lateinit var viewModel: MainViewModel
     var RESULT_LOAD_IMAGE = 101
     var productId = 1
     lateinit var file: File
     var picturePath: String = ""
     lateinit var apis: Apis
     val REQUEST_ID_MULTIPLE_PERMISSIONS = 7
-    var brokerList = arrayListOf<String>("EXNESS", "Vantage", "Fxopulence", "Multibank", "All")
+    var brokerList = arrayListOf<String>()
     var brokerName = ""
+
+
+    private fun setUpViewModel() {
+        val dispatchers: CoroutineDispatcher = Dispatchers.Main
+        val mainRepos = DefaultMainRepositories() as MainRepos
+        val fanxApi: Apis = ApiClient().service
+        val viewModelProviderfactory =
+            MainViewModelProvider(application, mainRepos, dispatchers, fanxApi)
+        viewModel = ViewModelProvider(this, viewModelProviderfactory)[MainViewModel::class.java]
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddClientBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setUpViewModel()
         productId = intent.getIntExtra(Global.ID, 1)
+        viewModel.getBrokerAll()
+        subscribeToObserver()
+
         binding.btnChooseFile.setOnClickListener {
             checkAndRequestPermissions()
             val i = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
@@ -59,13 +82,7 @@ class AddClientActivity : AppCompatActivity() {
             finish()
         }
 
-        val adapter: ArrayAdapter<String> =
-            ArrayAdapter<String>(this, R.layout.simple_dropdown_item_1line, brokerList)
-        binding.acBrokerName.setAdapter<ArrayAdapter<String>>(adapter)
 
-        binding.acBrokerName.setOnItemClickListener { parent, view, position, id ->
-            brokerName = brokerList[position]
-        }
 
         binding.btnSave.setOnClickListener {
             if (confirmInput(
@@ -92,6 +109,32 @@ class AddClientActivity : AppCompatActivity() {
             clearFieldData()
         }
 
+    }
+
+
+    private fun subscribeToObserver() {
+        viewModel.brokerAll.observe(this, Event.EventObserver(
+            onError = {
+                Toasty.error(this, it,Toasty.LENGTH_SHORT).show()
+            }, onLoading = {
+
+            }, {
+                if (it.status.equals(200)){
+                    for (productName in it.data){
+                        brokerList.add(productName.BrokerName)
+                    }
+                    val adapter: ArrayAdapter<String> =
+                        ArrayAdapter<String>(this, R.layout.simple_dropdown_item_1line, brokerList)
+                    binding.acBrokerName.setAdapter<ArrayAdapter<String>>(adapter)
+
+                    binding.acBrokerName.setOnItemClickListener { parent, view, position, id ->
+                        brokerName = brokerList[position]
+                    }
+                }else{
+                    Toasty.error(this, it.message,Toasty.LENGTH_SHORT).show()
+                }
+            }
+        ))
     }
 
 
@@ -151,7 +194,7 @@ class AddClientActivity : AppCompatActivity() {
     //todo api hitting here...
     fun apiHit() {
         val builder = MultipartBody.Builder()
-      //  val part: MultipartBody.Part = MultipartBody.Part.createFormData("int", "123")
+        //  val part: MultipartBody.Part = MultipartBody.Part.createFormData("int", "123")
         builder.setType(MultipartBody.FORM)
         builder.addFormDataPart("FullName", binding.etFullName.text.toString())
         builder.addFormDataPart("Email", binding.etEmail.text.toString())

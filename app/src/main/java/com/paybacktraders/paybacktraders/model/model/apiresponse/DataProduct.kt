@@ -11,4 +11,4 @@ data class DataProduct(
     val ProfitMA: String,
     val Status: String,
     val id: Int
-)
+):java.io.Serializable

@@ -1,8 +1,10 @@
 package com.paybacktraders.paybacktraders.activity
 
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
@@ -15,6 +17,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.paybacktraders.paybacktraders.R
+import com.paybacktraders.paybacktraders.activity.ui.AddProductActivity
 import com.paybacktraders.paybacktraders.api.ApiClient
 import com.paybacktraders.paybacktraders.api.Apis
 import com.paybacktraders.paybacktraders.databinding.ActivityNavigationDrawerBinding
@@ -27,6 +30,8 @@ import com.paybacktraders.paybacktraders.viewmodel.MainViewModelProvider
 import com.pixplicity.easyprefs.library.Prefs
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+
+
 
 
 class NavigationDrawerActivity : AppCompatActivity() {
@@ -98,12 +103,13 @@ class NavigationDrawerActivity : AppCompatActivity() {
         navViewHeaderBinding.tvUserEmail.text = Prefs.getString(Global.Email)
     }
 
-//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        menuInflater.inflate(R.menu.navigation_drawer, menu)
-//      //  val distItem=menu.findItem(R.id.distributorFragment).setVisible(false)
-//        return true
-//    }
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.navigation_drawer, menu)
+      //  val distItem=menu.findItem(R.id.distributorFragment).setVisible(false)
+        return true
+    }
+
 
 
     private fun hideDistributorItem() {

@@ -1,14 +1,18 @@
 package com.paybacktraders.paybacktraders.fragments
 
+import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.*
+import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.paybacktraders.paybacktraders.R
 import com.paybacktraders.paybacktraders.activity.AdminActivity
 import com.paybacktraders.paybacktraders.activity.MasterDistributorActivity
@@ -18,9 +22,13 @@ import com.paybacktraders.paybacktraders.apihelper.Event
 import com.paybacktraders.paybacktraders.databinding.FragmentClientBinding
 import com.paybacktraders.paybacktraders.global.Global
 import com.paybacktraders.paybacktraders.model.model.apirequestbody.BodyClientStatus
+import com.paybacktraders.paybacktraders.model.model.apiresponse.DataCLient
+import com.paybacktraders.paybacktraders.model.model.apiresponse.DataEmployeeAll
 import com.paybacktraders.paybacktraders.viewmodel.MainViewModel
 import com.pixplicity.easyprefs.library.Prefs
 import es.dmoral.toasty.Toasty
+import java.util.*
+import kotlin.collections.HashMap
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -40,6 +48,25 @@ class ClientFragment : Fragment() {
     var hashMap = HashMap<String, Any>()
     var announcementAdapter = ClientAdapter()
 
+
+    var startDate=""
+    var endDate=""
+
+    var alertDialog: AlertDialog? = null
+    var builderAlert: AlertDialog.Builder? = null
+    var brokerList = arrayListOf<String>()
+    var brokerName = ""
+
+    var statusList = arrayListOf<String>("All","Pending","Approved","Rejected","Connect","Disconnect")
+    var statusName = ""
+
+
+    private fun setUpLoadingDialog(context: Context) {
+        builderAlert = AlertDialog.Builder(context)
+        builderAlert!!.setView(R.layout.dialog_alert)
+        builderAlert!!.setCancelable(false)
+        alertDialog = builderAlert!!.create()
+    }
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -50,6 +77,7 @@ class ClientFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(
@@ -83,6 +111,70 @@ class ClientFragment : Fragment() {
     }
 
 
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        val item: MenuItem = menu.findItem(R.id.action_settings)
+        val itemSearch: MenuItem = menu.findItem(R.id.searchMenu)
+        val itemDate: MenuItem = menu.findItem(R.id.dateMenu)
+        val itemFilter: MenuItem = menu.findItem(R.id.filterMenu)
+        item.isVisible = false
+        itemDate.isVisible = true
+        itemSearch.isVisible = true
+        itemFilter.isVisible=true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.dateMenu -> {
+                val builder = MaterialDatePicker.Builder.dateRangePicker()
+                val now = Calendar.getInstance()
+                builder.setSelection(androidx.core.util.Pair(now.timeInMillis, now.timeInMillis))
+
+                val picker = builder.build()
+                picker.show(activity?.supportFragmentManager!!, picker.toString())
+
+                picker.addOnNegativeButtonClickListener { picker.dismiss() }
+                picker.addOnPositiveButtonClickListener {
+                    startDate=Global.formatDateFromMilliseconds(it.first)
+                    endDate=Global.formatDateFromMilliseconds(it.second)
+                    hashMap[Global.PAYLOAD_EMPLOYEE_ID] = Prefs.getInt(Global.ID)
+                    hashMap[Global.PAYLOAD_TYPE] = "Connect"
+                    hashMap[Global.PAYLOAD_FROM_DATE] = startDate
+                    hashMap[Global.PAYLOAD_TO_DATE] = endDate
+
+                    viewModel.getClientALlFilter(hashMap)
+                    subscribeToFilterObserver()
+
+                 //   Timber.i("The selected date range is ${it.first} - ${it.second}")
+
+                }
+                return true
+            }
+
+            R.id.filterMenu -> {
+                Log.e(TAG, "onOptionsItemSelected: ", )
+                binding!!.apply {
+
+                        if (linearFilters.visibility==View.GONE){
+                            linearFilters.visibility=View.VISIBLE
+                        }else{
+                            linearFilters.visibility=View.GONE
+                        }
+
+                }
+
+
+
+                return true
+            }
+        }
+
+
+        return super.onOptionsItemSelected(item)
+
+
+    }
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         where = Prefs.getString(Global.INTENT_WHERE)
@@ -97,13 +189,11 @@ class ClientFragment : Fragment() {
             (activity as NavigationDrawerActivity).viewModel
         }
         _binding = FragmentClientBinding.bind(view)
+        setUpLoadingDialog(requireContext())
 
 
 
         if (where.equals("admin", ignoreCase = true)) {
-            viewModel.getClientAll()
-            subscribeToObserver()
-        }else{
             hashMap[Global.PAYLOAD_EMPLOYEE_ID] = Prefs.getInt(Global.ID)
             hashMap[Global.PAYLOAD_TYPE] = "Connect"
             hashMap[Global.PAYLOAD_FROM_DATE] = ""
@@ -111,9 +201,48 @@ class ClientFragment : Fragment() {
 
             viewModel.getClientALlFilter(hashMap)
             subscribeToFilterObserver()
+        } else {
+            hashMap[Global.PAYLOAD_EMPLOYEE_ID] = Prefs.getInt(Global.ID)
+            hashMap[Global.PAYLOAD_TYPE] = "All"
+            hashMap[Global.PAYLOAD_FROM_DATE] = ""
+            hashMap[Global.PAYLOAD_TO_DATE] = ""
+
+            viewModel.getClientALlFilter(hashMap)
+            subscribeToFilterObserver()
         }
 
-       // viewModel.getDashboardData(hashMap)
+        binding!!.linearFilterButton.setOnClickListener {
+            hashMap[Global.PAYLOAD_EMPLOYEE_ID] = Prefs.getInt(Global.ID)
+            hashMap[Global.PAYLOAD_TYPE] = statusName
+            hashMap[Global.PAYLOAD_FROM_DATE] = startDate
+            hashMap[Global.PAYLOAD_TO_DATE] = endDate
+            viewModel.getClientALlFilter(hashMap)
+            subscribeToFilterObserver()
+        }
+
+        announcementAdapter.setOnAttachmentClickListener {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(it.PaymentProof))
+
+            // Check if there's any app that can handle the Intent (e.g., Chrome)
+
+                // Open the link in the Chrome browser
+                startActivity(intent)
+
+        }
+
+        announcementAdapter.setOnRemarkClickListener {
+            val bundle=Bundle().apply {
+                putString("id",it.id.toString())
+            }
+            findNavController().navigate(R.id.dialogRemarkStatusBinding,bundle)
+        }
+
+
+
+        viewModel.getBrokerAll()
+        subscribeToBrokerObserver()
+
+        // viewModel.getDashboardData(hashMap)
 
         setUpRecyclerView()
 
@@ -152,8 +281,53 @@ class ClientFragment : Fragment() {
 
 
         }
+        setupStatus()
 
 
+    }
+
+    private fun setupStatus() {
+        val adapter: ArrayAdapter<String> =
+            ArrayAdapter<String>(
+                requireContext(),
+                android.R.layout.simple_dropdown_item_1line,
+                statusList
+            )
+        binding!!.acStatus.setAdapter<ArrayAdapter<String>>(adapter)
+
+        binding!!.acStatus.setOnItemClickListener { parent, view, position, id ->
+            statusName = statusList[position]
+        }
+    }
+
+
+    private fun subscribeToBrokerObserver() {
+        viewModel.brokerAll.observe(viewLifecycleOwner, Event.EventObserver(
+            onError = {
+                Toasty.error(requireContext(), it, Toasty.LENGTH_SHORT).show()
+            }, onLoading = {
+
+            }, {
+                if (it.status.equals(200)) {
+                    for (productName in it.data) {
+                        brokerList.add(productName.BrokerName)
+                    }
+                    val adapter: ArrayAdapter<String> =
+                        ArrayAdapter<String>(
+                            requireContext(),
+                            android.R.layout.simple_dropdown_item_1line,
+                            brokerList
+                        )
+                    binding!!.acBrokerName.setAdapter<ArrayAdapter<String>>(adapter)
+
+                    binding!!.acBrokerName.setOnItemClickListener { parent, view, position, id ->
+                        brokerName = brokerList[position]
+                    }
+                } else {
+                    Toasty.error(requireContext(), it.message, Toasty.LENGTH_SHORT).show()
+                }
+            }
+        ))
     }
 
     private fun SubscribeToStatus() {
@@ -161,7 +335,7 @@ class ClientFragment : Fragment() {
             onError = {
                 Global.hideDialog()
                 Toasty.error(requireContext(), it).show()
-                Log.e(ClientFragment.TAG, "SubscribeToStatus:$it ",)
+                Log.e(ClientFragment.TAG, "SubscribeToStatus:$it ")
             }, onLoading = {
                 Global.showDialog(requireActivity())
 
@@ -221,13 +395,13 @@ class ClientFragment : Fragment() {
 
         viewModel.clientFilter.observe(viewLifecycleOwner, Event.EventObserver(
             onError = {
-                Global.hideDialog()
+               alertDialog!!.dismiss()
                 Toasty.error(requireContext(), it).show()
             }, onLoading = {
-                Global.showDialog(requireActivity())
+                alertDialog!!.show()
 
             }, {
-                Global.hideDialog()
+                alertDialog!!.dismiss()
                 //  Toasty.success(requireContext(),it)
                 if (it.status.equals(200)) {
                     if (it.data.isEmpty()) {
@@ -235,7 +409,27 @@ class ClientFragment : Fragment() {
                         announcementAdapter.announcement = it.data
                     } else {
                         binding!!.nodataFound.visibility = View.GONE
-                        announcementAdapter.announcement = it.data
+                        if (brokerName.isEmpty()){
+
+                            announcementAdapter.announcement = it.data
+                        }else{
+
+                            var masterList = mutableListOf<DataCLient>()
+
+                            for (master in it.data) {
+                                if (master.BrokerName == brokerName) {
+
+                                    masterList.add(master)
+                                }
+                            }
+                            if (masterList.isEmpty()){
+                                binding!!.nodataFound.visibility = View.VISIBLE
+                            }else{
+                                binding!!.nodataFound.visibility = View.GONE
+                            }
+                            announcementAdapter.announcement = masterList
+                        }
+
                     }
 
 

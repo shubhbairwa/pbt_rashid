@@ -23,6 +23,11 @@ class ProductAdapter :
         onItemClickListener = listener
     }
 
+    private var onFullItemClickListener: ((DataProduct) -> Unit)? = null
+    fun setOnFullItemClickListener(listener: (DataProduct) -> Unit) {
+        onFullItemClickListener = listener
+    }
+
 
     private var onItemAddClientClickListener: ((DataProduct) -> Unit)? = null
     fun setOnAddClientItemClickListener(listener: (DataProduct) -> Unit) {
@@ -69,6 +74,7 @@ class ProductAdapter :
                 tvMaxDD.text = currentAnnouncement.MaxDD
                 tvBoatName.text = currentAnnouncement.ProductName
                 tvProfit.text = currentAnnouncement.ProfitMA.toString()
+                tvPrice.text="$ ${currentAnnouncement.ProductFee}"
 
                 tvShareLink.setOnClickListener {
                     onItemClickListener?.let { click ->
@@ -78,6 +84,13 @@ class ProductAdapter :
 
                 chipAddProuct.setOnClickListener {
                     onItemAddClientClickListener?.let { click ->
+                        click(currentAnnouncement)
+
+                    }
+                }
+
+                itemView.setOnClickListener {
+                    onFullItemClickListener?.let { click->
                         click(currentAnnouncement)
 
                     }

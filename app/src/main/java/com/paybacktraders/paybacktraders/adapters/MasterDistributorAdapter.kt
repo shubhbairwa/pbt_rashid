@@ -1,6 +1,7 @@
 package com.paybacktraders.paybacktraders.adapters
 
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
@@ -28,6 +29,9 @@ class MasterDistributorAdapter :
 //    fun setRvClickListener(rvItemClickListener: RvItemClickListener?) {
 //        this.rvItemClickListener = rvItemClickListener
 //    }
+
+
+
 
     private var onItemClickListener: ((DataEmployeeAll) -> Unit)? = null
 
@@ -108,6 +112,22 @@ class MasterDistributorAdapter :
     override fun getItemCount(): Int {
         return masterDistributor.size
     }
+
+
+//    fun filter(query: String) {
+//       // val originalList = differ.currentList.toList()
+//        val filteredList = if (query.isEmpty()) {
+//            masterDistributor
+//        } else {
+//            masterDistributor.filter { item ->
+//                item.Role.equals(query, ignoreCase = true)
+//            }
+//        }
+//        Log.e("filter", "filter:${masterDistributor.toString()} ", )
+//        Log.e("AFTERFILTERfilter", "filter:${filteredList.toString()} ", )
+//        differ.submitList(filteredList)
+//        notifyDataSetChanged()
+//    }
 
 
 }

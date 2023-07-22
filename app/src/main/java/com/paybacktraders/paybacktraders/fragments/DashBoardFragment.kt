@@ -1,12 +1,17 @@
 package com.paybacktraders.paybacktraders.fragments
 
 import android.content.DialogInterface
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.paybacktraders.paybacktraders.R
 import com.paybacktraders.paybacktraders.activity.AdminActivity
@@ -35,11 +40,21 @@ class DashBoardFragment : Fragment(R.layout.fragment_dash_board) {
 
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true);
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        val item: MenuItem = menu.findItem(R.id.action_settings)
+        item.isVisible = false
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         where = Prefs.getString(Global.INTENT_WHERE)
-        Toast.makeText(requireContext(),where,Toast.LENGTH_SHORT).show()
+        //Toast.makeText(requireContext(),where,Toast.LENGTH_SHORT).show()
         Log.e(TAG, "onViewCreated: $where")
 
         /***check for type of user so that we assign viewmodel according to their corresponding activity**/
@@ -91,6 +106,23 @@ class DashBoardFragment : Fragment(R.layout.fragment_dash_board) {
             }
 
 
+        }
+
+        announcementAdapter.setOnAttachmentClickListener {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(it.PaymentProof))
+
+            // Check if there's any app that can handle the Intent (e.g., Chrome)
+
+            // Open the link in the Chrome browser
+            startActivity(intent)
+
+        }
+
+        announcementAdapter.setOnRemarkClickListener {
+            val bundle=Bundle().apply {
+                putString("id",it.id.toString())
+            }
+            findNavController().navigate(R.id.dialogRemarkStatusBinding,bundle)
         }
 
     }

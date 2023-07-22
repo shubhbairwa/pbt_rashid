@@ -1,15 +1,14 @@
 package com.paybacktraders.paybacktraders.activity.ui.home
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.paybacktraders.paybacktraders.R
 import com.paybacktraders.paybacktraders.databinding.FragmentHomeBinding
 
-class HomeFragment : Fragment() {
+class ProfileFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
 
@@ -38,5 +37,18 @@ class HomeFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+
+
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        val item: MenuItem = menu.findItem(R.id.action_settings)
+        item.isVisible = false
     }
 }

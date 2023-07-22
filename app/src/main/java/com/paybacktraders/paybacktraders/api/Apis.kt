@@ -1,9 +1,7 @@
 package com.paybacktraders.paybacktraders.api
 
 
-import com.paybacktraders.paybacktraders.model.model.apirequestbody.BodyAddDistributor
-import com.paybacktraders.paybacktraders.model.model.apirequestbody.BodyClientStatus
-import com.paybacktraders.paybacktraders.model.model.apirequestbody.BodyUpdateDistributor
+import com.paybacktraders.paybacktraders.model.model.apirequestbody.*
 import com.paybacktraders.paybacktraders.model.model.apiresponse.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -62,9 +60,25 @@ interface Apis {
     @Headers("Content-Type: application/json; charset=UTF-8")
     suspend fun getProductFilter(@Body data : HashMap<String,Any>): Response<ProductResponse>
 
+    @POST("product/create")
+    @Headers("Content-Type: application/json; charset=UTF-8")
+    suspend fun addProduct(@Body data : BodyForAddProduct): Response<ResponseGlobal>
+
+    @POST("product/update")
+    @Headers("Content-Type: application/json; charset=UTF-8")
+    suspend fun updateProduct(@Body data : BodyForUpdateProduct): Response<ResponseGlobal>
+
     @GET("employee/all")
     @Headers("Content-Type: application/json; charset=UTF-8")
     suspend fun getEmployeeALl(): Response<ResponseEmployeeAll>
+
+    @GET("contactus/all")
+    @Headers("Content-Type: application/json; charset=UTF-8")
+    suspend fun getContactUsAll(): Response<ResponseContactUs>
+
+
+
+
 
 
     @GET("product/all")
@@ -78,7 +92,14 @@ interface Apis {
    suspend fun customerApproval(@Body request : BodyClientStatus): Response<ResponseLogin>
 
 
+    @GET("/broker/all")
+    @Headers("Content-Type: application/json; charset=UTF-8")
+    suspend fun getBrokerAll(): Response<ResponseBrokerAll>
 
+
+    @POST("customer/all_status_remarks")
+    @Headers("Content-Type: application/json; charset=UTF-8")
+    suspend fun getCustomerStatus(@Body data : HashMap<String,Any>): Response<ResponseClientStatusRemark>
 
 
 

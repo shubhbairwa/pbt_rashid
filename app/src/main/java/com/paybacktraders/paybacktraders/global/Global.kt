@@ -26,14 +26,21 @@ object Global {
         dialog.dismiss()
     }
 
+
+    fun formatDateFromMilliseconds(milliseconds: Long): String {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val date = Date(milliseconds)
+        return dateFormat.format(date)
+    }
+
    // const val BASE_URL = "http://45.132.241.50:8001"
 
 /********TESTMOODEURL**********/
-   // const val BASE_URL = "https://paybackbytrades.in:8002/"
+    const val BASE_URL = "https://paybackbytrades.in:8002/"
 
     /********LIVEMODEURL**********/
 
-      const val BASE_URL = "https://paybackbytrades.in:8000/"
+    //  const val BASE_URL = "https://paybackbytrades.in:8000/"
 
     /**
     "id": 1,

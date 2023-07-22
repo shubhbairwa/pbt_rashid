@@ -13,9 +13,7 @@ import androidx.lifecycle.viewModelScope
 import com.paybacktraders.paybacktraders.apihelper.Resource
 import com.paybacktraders.paybacktraders.api.Apis
 import com.paybacktraders.paybacktraders.apihelper.Event
-import com.paybacktraders.paybacktraders.model.model.apirequestbody.BodyAddDistributor
-import com.paybacktraders.paybacktraders.model.model.apirequestbody.BodyClientStatus
-import com.paybacktraders.paybacktraders.model.model.apirequestbody.BodyUpdateDistributor
+import com.paybacktraders.paybacktraders.model.model.apirequestbody.*
 import com.paybacktraders.paybacktraders.model.model.apiresponse.*
 import com.paybacktraders.paybacktraders.repository.MainRepos
 import kotlinx.coroutines.CoroutineDispatcher
@@ -38,6 +36,17 @@ class MainViewModel(
 
     private val _employeeAll = MutableLiveData<Event<Resource<ResponseEmployeeAll>>>()
     val employeeAll: LiveData<Event<Resource<ResponseEmployeeAll>>> = _employeeAll
+
+    private val _contactUsAll = MutableLiveData<Event<Resource<ResponseContactUs>>>()
+    val contactUsAll: LiveData<Event<Resource<ResponseContactUs>>> = _contactUsAll
+
+    private val _statusClientRemark = MutableLiveData<Event<Resource<ResponseClientStatusRemark>>>()
+    val statusClientRemark: LiveData<Event<Resource<ResponseClientStatusRemark>>> = _statusClientRemark
+
+    private val _brokerAll = MutableLiveData<Event<Resource<ResponseBrokerAll>>>()
+    val brokerAll: LiveData<Event<Resource<ResponseBrokerAll>>> = _brokerAll
+
+
     private val _addDist = MutableLiveData<Event<Resource<ResponseGlobal>>>()
     val addDist: LiveData<Event<Resource<ResponseGlobal>>> = _addDist
 
@@ -49,6 +58,12 @@ class MainViewModel(
     val productAll: LiveData<Event<Resource<ProductResponse>>> = _productAll
     private val _updateCustomerStatus = MutableLiveData<Event<Resource<ResponseLogin>>>()
     val updateCustomerStatus: LiveData<Event<Resource<ResponseLogin>>> = _updateCustomerStatus
+
+    private val _addProduct = MutableLiveData<Event<Resource<ResponseGlobal>>>()
+    val addProduct: LiveData<Event<Resource<ResponseGlobal>>> = _addProduct
+
+    private val _updateProduct = MutableLiveData<Event<Resource<ResponseGlobal>>>()
+    val updateProduct: LiveData<Event<Resource<ResponseGlobal>>> = _updateProduct
 
 
     private val _dashBOardData = MutableLiveData<Event<Resource<DashBoardResponse>>>()
@@ -79,11 +94,44 @@ class MainViewModel(
         }
     }
 
+    fun getCustomerStatus(data: HashMap<String, Any>) {
+        _statusClientRemark.postValue(Event(Resource.Loading()))
+        viewModelScope.launch(Dispatchers.Main) {
+            val result = repos.getCustomerStatus(data)
+            _statusClientRemark.postValue(Event(result))
+        }
+    }
+
+    fun getBrokerAll() {
+        _brokerAll.postValue(Event(Resource.Loading()))
+        viewModelScope.launch(Dispatchers.Main) {
+            val result = repos.getBrokerAll()
+            _brokerAll.postValue(Event(result))
+        }
+    }
+
     fun updateCustomerStatus(data: BodyClientStatus) {
         _updateCustomerStatus.postValue(Event(Resource.Loading()))
         viewModelScope.launch(Dispatchers.Main) {
             val result = repos.updateCustomerStatus(data)
             _updateCustomerStatus.postValue(Event(result))
+        }
+    }
+
+
+    fun addProduct(data: BodyForAddProduct) {
+        _addProduct.postValue(Event(Resource.Loading()))
+        viewModelScope.launch(Dispatchers.Main) {
+            val result = repos.addProduct(data)
+            _addProduct.postValue(Event(result))
+        }
+    }
+
+    fun updateProduct(data: BodyForUpdateProduct) {
+        _updateProduct.postValue(Event(Resource.Loading()))
+        viewModelScope.launch(Dispatchers.Main) {
+            val result = repos.updateProduct(data)
+            _updateProduct.postValue(Event(result))
         }
     }
 
@@ -142,6 +190,17 @@ class MainViewModel(
             _employeeAll.postValue(Event(result))
         }
     }
+
+
+    fun getcontactusall() {
+        _contactUsAll.postValue(Event(Resource.Loading()))
+        viewModelScope.launch(Dispatchers.Main) {
+            val result = repos.getcontactusall()
+            _contactUsAll.postValue(Event(result))
+        }
+    }
+
+
 
     fun getProductAll() {
         _productAll.postValue(Event(Resource.Loading()))

@@ -1,15 +1,14 @@
 package com.paybacktraders.paybacktraders.activity.ui.slideshow
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.paybacktraders.paybacktraders.R
 import com.paybacktraders.paybacktraders.databinding.FragmentSlideshowBinding
 
-class SlideshowFragment : Fragment() {
+class FinanceFragment : Fragment() {
 
     private var _binding: FragmentSlideshowBinding? = null
 
@@ -38,5 +37,18 @@ class SlideshowFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+
+
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        val item: MenuItem = menu.findItem(R.id.action_settings)
+        item.isVisible = false
     }
 }

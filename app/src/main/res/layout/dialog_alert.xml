@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="100dp"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="16dp"
+
+    android:orientation="vertical">
+
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/progressBar"
+     android:layout_gravity="center"
+        android:layout_width="70dp"
+
+
+        android:indeterminateTint="@color/purple_500"
+        android:layout_height="70dp"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/loading_lottie"
+        />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+      android:fontFamily="@font/product_sans"
+        android:layout_gravity="center"
+        android:textStyle="bold"
+        android:layout_margin="8dp"
+        android:text="Getting Please Wait..." />
+</LinearLayout>

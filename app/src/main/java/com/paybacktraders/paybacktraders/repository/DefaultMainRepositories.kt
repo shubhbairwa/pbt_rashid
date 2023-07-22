@@ -3,9 +3,7 @@ package com.paybacktraders.paybacktraders.repository
 import com.paybacktraders.paybacktraders.api.ApiClient
 import com.paybacktraders.paybacktraders.apihelper.Resource
 import com.paybacktraders.paybacktraders.apihelper.safeCall
-import com.paybacktraders.paybacktraders.model.model.apirequestbody.BodyAddDistributor
-import com.paybacktraders.paybacktraders.model.model.apirequestbody.BodyClientStatus
-import com.paybacktraders.paybacktraders.model.model.apirequestbody.BodyUpdateDistributor
+import com.paybacktraders.paybacktraders.model.model.apirequestbody.*
 import com.paybacktraders.paybacktraders.model.model.apiresponse.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -40,6 +38,12 @@ class DefaultMainRepositories : MainRepos {
             Resource.Success(response.body()!!)
         }
     }
+    override suspend fun getCustomerStatus(data: HashMap<String, Any>)= withContext(Dispatchers.IO){
+        safeCall {
+            val response = ApiClient().service.getCustomerStatus(data)
+            Resource.Success(response.body()!!)
+        }
+    }
 
     override suspend fun addDistributor(data: BodyAddDistributor)= withContext(Dispatchers.IO){
         safeCall {
@@ -58,6 +62,20 @@ class DefaultMainRepositories : MainRepos {
     override suspend fun updateCustomerStatus(data: BodyClientStatus)= withContext(Dispatchers.IO){
         safeCall {
             val response = ApiClient().service.customerApproval(data)
+            Resource.Success(response.body()!!)
+        }
+    }
+
+    override suspend fun addProduct(data: BodyForAddProduct)= withContext(Dispatchers.IO){
+        safeCall {
+            val response = ApiClient().service.addProduct(data)
+            Resource.Success(response.body()!!)
+        }
+    }
+
+    override suspend fun updateProduct(data: BodyForUpdateProduct)= withContext(Dispatchers.IO){
+        safeCall {
+            val response = ApiClient().service.updateProduct(data)
             Resource.Success(response.body()!!)
         }
     }
@@ -86,6 +104,24 @@ class DefaultMainRepositories : MainRepos {
     override suspend fun getEmployeeAll()= withContext(Dispatchers.IO){
         safeCall {
             val response = ApiClient().service.getEmployeeALl()
+            Resource.Success(response.body()!!)
+        }
+    }
+
+
+  override suspend fun getcontactusall()= withContext(Dispatchers.IO){
+        safeCall {
+            val response = ApiClient().service.getContactUsAll()
+            Resource.Success(response.body()!!)
+        }
+    }
+
+
+
+
+    override suspend fun getBrokerAll()= withContext(Dispatchers.IO){
+        safeCall {
+            val response = ApiClient().service.getBrokerAll()
             Resource.Success(response.body()!!)
         }
     }

@@ -25,6 +25,15 @@ class ClientAdapter :
         onItemClickListener = listener
     }
 
+    private var onRemarkClickListener: ((DataCLient) -> Unit)? = null
+    fun setOnRemarkClickListener(listener: (DataCLient) -> Unit) {
+        onRemarkClickListener = listener
+    }
+ private var onAttachmentClickListener: ((DataCLient) -> Unit)? = null
+    fun setOnAttachmentClickListener(listener: (DataCLient) -> Unit) {
+        onAttachmentClickListener = listener
+    }
+
 
     private val differCallback = object :
         DiffUtil.ItemCallback<DataCLient>() {
@@ -56,6 +65,18 @@ class ClientAdapter :
                 tvCustomermobile.text = currentAnnouncement.Mobile
                 tvCustomerStatus.setOnClickListener {
                     onItemClickListener?.let { click->
+                        click(currentAnnouncement)
+                    }
+                }
+
+                chipRemarks!!.setOnClickListener {
+                    onRemarkClickListener?.let { click->
+                        click(currentAnnouncement)
+                    }
+                }
+
+                chipPaymentScreenshot!!.setOnClickListener {
+                    onAttachmentClickListener?.let { click->
                         click(currentAnnouncement)
                     }
                 }

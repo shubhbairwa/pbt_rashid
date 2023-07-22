@@ -4,16 +4,13 @@ package com.paybacktraders.paybacktraders.fragments
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.paybacktraders.paybacktraders.R
-import com.paybacktraders.paybacktraders.activity.AddClientActivity
-import com.paybacktraders.paybacktraders.activity.AdminActivity
-import com.paybacktraders.paybacktraders.activity.MasterDistributorActivity
-import com.paybacktraders.paybacktraders.activity.NavigationDrawerActivity
+import com.paybacktraders.paybacktraders.activity.*
+import com.paybacktraders.paybacktraders.activity.ui.AddProductActivity
 import com.paybacktraders.paybacktraders.adapters.ProductAdapter
 import com.paybacktraders.paybacktraders.apihelper.Event
 import com.paybacktraders.paybacktraders.databinding.FragmentProductBinding
@@ -40,6 +37,8 @@ class ProductFragment : Fragment() {
     var where: String = ""
     var hashMap = HashMap<String, Any>()
     var productAdapter = ProductAdapter()
+     var alertDialog: AlertDialog?=null
+    var builderAlert:AlertDialog.Builder?=null
 
 
     override fun onCreateView(
@@ -53,6 +52,48 @@ class ProductFragment : Fragment() {
             false
         )
     }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        setHasOptionsMenu(true)
+
+    }
+
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        val item: MenuItem = menu.findItem(R.id.action_settings)
+        val itemSearch: MenuItem = menu.findItem(R.id.searchMenu)
+        item.isVisible = true
+        itemSearch.isVisible=true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_settings -> {
+                Intent(activity, AddProductActivity::class.java).also {
+                    startActivity(it)
+                }
+                return true
+            }
+
+            R.id.searchMenu -> {
+//                Intent(activity, AddProductActivity::class.java).also {
+//                    startActivity(it)
+//                }
+                Toasty.info(requireContext(),"search").show()
+                return true
+            }
+        }
+
+
+        return super.onOptionsItemSelected(item)
+
+
+    }
+
+
+
 
     companion object {
         private const val TAG = "ProductFragment"
@@ -75,23 +116,31 @@ class ProductFragment : Fragment() {
         }
         _binding = FragmentProductBinding.bind(view)
 
-
-        if (where.equals("admin", ignoreCase = true)) {
-            viewModel.getProductAll()
-            subscribeToObserver()
-        } else {
-            hashMap[Global.PAYLOAD_EMPLOYEE_ID] = Prefs.getInt(Global.ID)
-            viewModel.getProductAllFilter(hashMap)
-            subscribeToFIlterObserver()
-        }
+        builderAlert=AlertDialog.Builder(requireContext())
+        builderAlert!!.setView(R.layout.dialog_alert)
+        builderAlert!!.setCancelable(false)
+      alertDialog=  builderAlert!!.create()
 
 
 
-        setUpRecyclerView()
+
+
+
 
         productAdapter.setOnAddClientItemClickListener{ data->
             Intent(requireActivity(), AddClientActivity::class.java).also {
                 it.putExtra(Global.ID,data.id)
+                startActivity(it)
+            }
+        }
+
+        productAdapter.setOnFullItemClickListener { dataProduct ->
+            val bundle=Bundle().apply {
+                putSerializable("product",dataProduct)
+            }
+            Intent(activity, UpdateProductDetailsActivity::class.java).also {
+               // it.putExtra(Global.INTENT_WHERE,Global.DISTRIBUTOR_STRING)
+                it.putExtra("product",dataProduct)
                 startActivity(it)
             }
         }
@@ -117,6 +166,23 @@ class ProductFragment : Fragment() {
             /*Fire!*/
             /*Fire!*/startActivity(Intent.createChooser(intent, "Share Via"))
         }
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (where.equals("admin", ignoreCase = true)) {
+            viewModel.getProductAll()
+            subscribeToObserver()
+        } else {
+            hashMap[Global.PAYLOAD_EMPLOYEE_ID] = Prefs.getInt(Global.ID)
+            viewModel.getProductAllFilter(hashMap)
+            subscribeToFIlterObserver()
+        }
+
+
+
+        setUpRecyclerView()
     }
 
 
@@ -131,13 +197,13 @@ class ProductFragment : Fragment() {
 
         viewModel.productAll.observe(viewLifecycleOwner, Event.EventObserver(
             onError = {
-                Global.hideDialog()
+               alertDialog!!.hide()
                 Toasty.error(requireContext(), it).show()
             }, onLoading = {
-                Global.showDialog(requireActivity())
+                alertDialog!!.show()
 
             }, {
-                Global.hideDialog()
+            alertDialog!!.hide()
                 //  Toasty.success(requireContext(),it)
                 if (it.status.equals(200)) {
                     if (it.data.isEmpty()) {
@@ -162,13 +228,13 @@ class ProductFragment : Fragment() {
 
         viewModel.productAll.observe(viewLifecycleOwner, Event.EventObserver(
             onError = {
-                Global.hideDialog()
+                alertDialog!!.hide()
                 Toasty.error(requireContext(), it).show()
             }, onLoading = {
-                Global.showDialog(requireActivity())
+                alertDialog!!.show()
 
             }, {
-                Global.hideDialog()
+                alertDialog!!.hide()
                 //  Toasty.success(requireContext(),it)
                 if (it.status.equals(200)) {
                     if (it.data.isEmpty()) {

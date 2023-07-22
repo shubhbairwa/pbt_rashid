@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.paybacktraders.paybacktraders.activity.ui.home.HomeFragment"
+        android:name="com.paybacktraders.paybacktraders.activity.ui.home.ProfileFragment"
         android:label="@string/my_profile"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/EnquiryFragment"
-        android:name="com.paybacktraders.paybacktraders.activity.ui.gallery.GalleryFragment"
+        android:name="com.paybacktraders.paybacktraders.activity.ui.gallery.EnquiryFragment"
         android:label="@string/enquiry"
         tools:layout="@layout/fragment_gallery" />
 
     <fragment
         android:id="@+id/financeFragment"
-        android:name="com.paybacktraders.paybacktraders.activity.ui.slideshow.SlideshowFragment"
+        android:name="com.paybacktraders.paybacktraders.activity.ui.slideshow.FinanceFragment"
         android:label="@string/finance"
         tools:layout="@layout/fragment_slideshow" />
 
@@ -49,5 +49,14 @@
         android:name="com.paybacktraders.paybacktraders.fragments.DistributorFragment"
         android:label="@string/distributor"
         tools:layout="@layout/fragment_distributor" />
+    <fragment
+        android:id="@+id/dialogRemarkStatusBinding"
+        android:name="com.paybacktraders.paybacktraders.dialogs.ClientStatusRemarkDialog"
+        android:label="Remarks"
+        tools:layout="@layout/dialog_remark_status">
+        <argument
+            android:name="id"
+            app:argType="string" />
+    </fragment>
 
 </navigation>

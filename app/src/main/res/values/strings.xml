@@ -36,4 +36,11 @@
     <string name="enquiry">Enquiry</string>
     <string name="finance">Finance</string>
     <string name="logout">LogOut</string>
+    <string name="search">Search</string>
+    <string name="all">All</string>
+    <string name="add">Add</string>
+    <string name="filter">Filter</string>
+    <string name="date">Date</string>
+    <string name="cross_button">Cross Button</string>
+    <string name="remarks_heading">Remarks</string>
 </resources>

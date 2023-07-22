@@ -23,6 +23,29 @@
         app:srcCompat="@drawable/ic_baseline_add_24"
         app:tint="@color/white" />
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/select_type_input_layout"
+        style="@style/dropdown"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:hint="Filter Distributor"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+
+        <AutoCompleteTextView
+            android:id="@+id/ac_type_distributor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvMasterDistributor"
         android:layout_width="0dp"
@@ -32,7 +55,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/select_type_input_layout"
         app:layout_constraintVertical_bias="0.5"
         tools:listitem="@layout/master_distribution_item_list_layout" />
 

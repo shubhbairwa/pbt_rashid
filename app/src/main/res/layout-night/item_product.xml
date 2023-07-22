@@ -58,7 +58,7 @@
                         android:text="Add"
                         android:textColor="#009D48"
                         android:textStyle="bold"
-                        app:chipBackgroundColor="@color/black"
+                        app:chipBackgroundColor="#3A3A3A"
                         app:chipIcon="@drawable/ic_baseline_add_24"
                         app:chipIconTint="#009D48"
                         app:chipStrokeColor="#009D48"
@@ -74,7 +74,7 @@
                         android:text="Share Link"
                         android:textColor="#009D48"
                         android:textStyle="bold"
-                        app:chipBackgroundColor="@color/black"
+                        app:chipBackgroundColor="#3A3A3A"
                         app:chipIconTint="#009D48"
                         app:chipStrokeColor="#009D48"
                         app:chipStrokeWidth="1dp"
@@ -95,7 +95,7 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="50"
                     android:orientation="horizontal">
 
                     <TextView
@@ -124,7 +124,7 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1.5">
+                    android:layout_weight="50">
 
                     <TextView
                         style="@style/TextAppearance.MaterialComponents.Subtitle2"
@@ -157,7 +157,7 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="50"
                     android:orientation="horizontal">
 
                     <TextView
@@ -186,7 +186,7 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1.5">
+                    android:layout_weight="50">
 
                     <TextView
                         style="@style/TextAppearance.MaterialComponents.Subtitle2"
@@ -247,8 +247,32 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1.5"
-                    android:orientation="horizontal"/>
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/TextAppearance.MaterialComponents.Subtitle2"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.4"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:padding="5dp"
+                        android:text="Price" />
+
+                    <TextView
+                        android:id="@+id/tvPrice"
+                        style="@style/TextAppearance.MaterialComponents.Body2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_weight="0.4"
+                        android:padding="5dp"
+                        android:text="" />
+
+                </LinearLayout>
+
 
             </LinearLayout>
 
