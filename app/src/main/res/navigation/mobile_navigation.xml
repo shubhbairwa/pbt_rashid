@@ -7,21 +7,21 @@
 
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.paybacktraders.paybacktraders.activity.ui.home.ProfileFragment"
+        android:name="com.paybacktraders.paybacktraders.activity.ui.profile.ProfileFragment"
         android:label="@string/my_profile"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_profile" />
 
     <fragment
         android:id="@+id/EnquiryFragment"
         android:name="com.paybacktraders.paybacktraders.activity.ui.gallery.EnquiryFragment"
         android:label="@string/enquiry"
-        tools:layout="@layout/fragment_gallery" />
+        tools:layout="@layout/fragment_enquiry" />
 
     <fragment
         android:id="@+id/financeFragment"
         android:name="com.paybacktraders.paybacktraders.activity.ui.slideshow.FinanceFragment"
         android:label="@string/finance"
-        tools:layout="@layout/fragment_slideshow" />
+        tools:layout="@layout/fragment_finance" />
 
     <fragment
         android:id="@+id/dashBoardFragment"
@@ -32,12 +32,20 @@
         android:id="@+id/masterDistributorFragment"
         android:name="com.paybacktraders.paybacktraders.fragments.MasterDistributorFragment"
         android:label="@string/master_distributor"
-        tools:layout="@layout/fragment_master_distributor" />
+        tools:layout="@layout/fragment_master_distributor" >
+        <action
+            android:id="@+id/action_masterDistributorFragment_to_distributorFragment"
+            app:destination="@id/distributorFragment" />
+    </fragment>
     <fragment
         android:id="@+id/clientFragment"
         android:name="com.paybacktraders.paybacktraders.fragments.ClientFragment"
         android:label="@string/client"
-        tools:layout="@layout/fragment_client" />
+        tools:layout="@layout/fragment_client" >
+        <argument
+            android:name="client"
+            app:argType="com.paybacktraders.paybacktraders.model.model.apiresponse.DataEmployeeAll" />
+    </fragment>
     <fragment
         android:id="@+id/productFragment"
         android:name="com.paybacktraders.paybacktraders.fragments.ProductFragment"
@@ -58,5 +66,22 @@
             android:name="id"
             app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/walletHistoryFragment"
+        android:name="com.paybacktraders.paybacktraders.fragments.WalletHistoryFragment"
+        android:label="Wallet History"
+        tools:layout="@layout/fragment_wallet_history" />
+    <fragment
+        android:id="@+id/walletWithdrawlFragment"
+        android:name="com.paybacktraders.paybacktraders.fragments.WalletWithdrawlFragment"
+        android:label="Wallet Withdrawl"
+        tools:layout="@layout/fragment_wallet_withdrawl"
+        />
+    <activity
+        android:id="@+id/customerDetailsActivity"
+        android:name="com.paybacktraders.paybacktraders.activity.CustomerDetailsActivity"
+        android:label="CustomerDetailsActivity"
+        tools:layout="@layout/activity_customer_details"/>
+
 
 </navigation>

@@ -10,13 +10,17 @@ import android.view.*
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.SearchView
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.paybacktraders.paybacktraders.R
 import com.paybacktraders.paybacktraders.activity.AdminActivity
+import com.paybacktraders.paybacktraders.activity.CustomerDetailsActivity
 import com.paybacktraders.paybacktraders.activity.MasterDistributorActivity
 import com.paybacktraders.paybacktraders.activity.NavigationDrawerActivity
+import com.paybacktraders.paybacktraders.activity.ui.SearchActivity
 import com.paybacktraders.paybacktraders.adapters.ClientAdapter
 import com.paybacktraders.paybacktraders.apihelper.Event
 import com.paybacktraders.paybacktraders.databinding.FragmentClientBinding
@@ -47,6 +51,7 @@ class ClientFragment : Fragment() {
     var where: String = ""
     var hashMap = HashMap<String, Any>()
     var announcementAdapter = ClientAdapter()
+    private var localClientList: MutableList<DataCLient> = mutableListOf()
 
 
     var startDate=""
@@ -58,8 +63,21 @@ class ClientFragment : Fragment() {
     var brokerName = ""
 
     var statusList = arrayListOf<String>("All","Pending","Approved","Rejected","Connect","Disconnect")
-    var statusName = ""
+    var statusName = "All"
+    var statusApproval="Connect"
 
+
+
+
+
+
+    private fun filterList(query: String) {
+        val filteredList = localClientList.filter { item ->
+            item.FullName.toLowerCase(Locale.ENGLISH).contains(query.toLowerCase(Locale.ENGLISH))
+        }
+
+        announcementAdapter.filterData(filteredList)
+    }
 
     private fun setUpLoadingDialog(context: Context) {
         builderAlert = AlertDialog.Builder(context)
@@ -116,10 +134,28 @@ class ClientFragment : Fragment() {
         val itemSearch: MenuItem = menu.findItem(R.id.searchMenu)
         val itemDate: MenuItem = menu.findItem(R.id.dateMenu)
         val itemFilter: MenuItem = menu.findItem(R.id.filterMenu)
+        val searchView = itemSearch?.actionView as SearchView
+
+        // Set up the SearchView's query text listener
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                // Filter the adapter based on the search query
+                // masterDistributorAdapter.filter.filter(newText)
+             //   Log.e(MasterDistributorFragment.TAG, "onQueryTextChange: $newText", )
+                filterList(newText)
+                return true
+            }
+        })
         item.isVisible = false
         itemDate.isVisible = true
         itemSearch.isVisible = true
         itemFilter.isVisible=true
+
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -134,44 +170,55 @@ class ClientFragment : Fragment() {
 
                 picker.addOnNegativeButtonClickListener { picker.dismiss() }
                 picker.addOnPositiveButtonClickListener {
-                    startDate=Global.formatDateFromMilliseconds(it.first)
-                    endDate=Global.formatDateFromMilliseconds(it.second)
+                    startDate = Global.formatDateFromMilliseconds(it.first)
+                    endDate = Global.formatDateFromMilliseconds(it.second)
                     hashMap[Global.PAYLOAD_EMPLOYEE_ID] = Prefs.getInt(Global.ID)
-                    hashMap[Global.PAYLOAD_TYPE] = "Connect"
+                    hashMap[Global.PAYLOAD_TYPE] = statusApproval
                     hashMap[Global.PAYLOAD_FROM_DATE] = startDate
                     hashMap[Global.PAYLOAD_TO_DATE] = endDate
 
                     viewModel.getClientALlFilter(hashMap)
                     subscribeToFilterObserver()
 
-                 //   Timber.i("The selected date range is ${it.first} - ${it.second}")
+                    //   Timber.i("The selected date range is ${it.first} - ${it.second}")
 
                 }
                 return true
             }
 
             R.id.filterMenu -> {
-                Log.e(TAG, "onOptionsItemSelected: ", )
+                Log.e(TAG, "onOptionsItemSelected: ",)
                 binding!!.apply {
 
-                        if (linearFilters.visibility==View.GONE){
-                            linearFilters.visibility=View.VISIBLE
-                        }else{
-                            linearFilters.visibility=View.GONE
-                        }
+                    if (linearFilters.visibility == View.GONE) {
+                        linearFilters.visibility = View.VISIBLE
+                    } else {
+                        linearFilters.visibility = View.GONE
+                    }
 
                 }
 
 
 
+
+
                 return true
             }
+
+            R.id.searchMenu -> {
+                //   Toasty.info(requireContext(),"Date").show()
+                Intent(requireActivity(), SearchActivity::class.java).also {
+                    it.putExtra(Global.INTENT_WHERE, Global.SEARCH_CLIENT)
+                    startActivity(it)
+
+                }
+                return true
+            }
+
+
+
         }
-
-
         return super.onOptionsItemSelected(item)
-
-
     }
 
 
@@ -190,22 +237,40 @@ class ClientFragment : Fragment() {
         }
         _binding = FragmentClientBinding.bind(view)
         setUpLoadingDialog(requireContext())
+        
+
+
+
+        announcementAdapter.setOnFullItemClickListener { data->
+            val bundle=Bundle().apply {
+                putParcelable("data",data)
+            }
+            Intent(requireActivity(),CustomerDetailsActivity::class.java).also {
+                it.putExtras(bundle)
+                startActivity(it)
+
+            }
+        }
+
+
 
 
 
         if (where.equals("admin", ignoreCase = true)) {
             hashMap[Global.PAYLOAD_EMPLOYEE_ID] = Prefs.getInt(Global.ID)
-            hashMap[Global.PAYLOAD_TYPE] = "Connect"
-            hashMap[Global.PAYLOAD_FROM_DATE] = ""
-            hashMap[Global.PAYLOAD_TO_DATE] = ""
+            hashMap[Global.PAYLOAD_TYPE] = "All"
+            hashMap[Global.PAYLOAD_FROM_DATE] = startDate
+            hashMap[Global.PAYLOAD_TO_DATE] = endDate
 
             viewModel.getClientALlFilter(hashMap)
             subscribeToFilterObserver()
+//            viewModel.getClientAll()
+//            subscribeToObserver()
         } else {
             hashMap[Global.PAYLOAD_EMPLOYEE_ID] = Prefs.getInt(Global.ID)
             hashMap[Global.PAYLOAD_TYPE] = "All"
-            hashMap[Global.PAYLOAD_FROM_DATE] = ""
-            hashMap[Global.PAYLOAD_TO_DATE] = ""
+            hashMap[Global.PAYLOAD_FROM_DATE] = startDate
+            hashMap[Global.PAYLOAD_TO_DATE] = endDate
 
             viewModel.getClientALlFilter(hashMap)
             subscribeToFilterObserver()
@@ -216,17 +281,30 @@ class ClientFragment : Fragment() {
             hashMap[Global.PAYLOAD_TYPE] = statusName
             hashMap[Global.PAYLOAD_FROM_DATE] = startDate
             hashMap[Global.PAYLOAD_TO_DATE] = endDate
+//            if (where.equals("admin", ignoreCase = true)){
+//                viewModel.getClientAll()
+//                subscribeToObserver()
+//                setUpRecyclerView()
+//            }else{
+//
+//            }
             viewModel.getClientALlFilter(hashMap)
             subscribeToFilterObserver()
+            setUpRecyclerView()
+
         }
 
         announcementAdapter.setOnAttachmentClickListener {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(it.PaymentProof))
+            if (it.PaymentProof.isEmpty()){
+                Toasty.info(requireContext(),"NO Data Found").show()
+            }else{
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(Global.PDF_BASE_URL+it.PaymentProof))
 
-            // Check if there's any app that can handle the Intent (e.g., Chrome)
+                // Check if there's any app that can handle the Intent (e.g., Chrome)
 
                 // Open the link in the Chrome browser
                 startActivity(intent)
+            }
 
         }
 
@@ -236,17 +314,6 @@ class ClientFragment : Fragment() {
             }
             findNavController().navigate(R.id.dialogRemarkStatusBinding,bundle)
         }
-
-
-
-        viewModel.getBrokerAll()
-        subscribeToBrokerObserver()
-
-        // viewModel.getDashboardData(hashMap)
-
-        setUpRecyclerView()
-
-
         announcementAdapter.setOnItemClickListener {
             if (it.ConnectionStatus.equals("Connect", ignoreCase = true)) {
                 Toasty.success(requireContext(), "Already Connected", Toasty.LENGTH_SHORT).show()
@@ -281,6 +348,18 @@ class ClientFragment : Fragment() {
 
 
         }
+
+
+        viewModel.getBrokerAll()
+        subscribeToBrokerObserver()
+
+        // viewModel.getDashboardData(hashMap)
+
+        setUpRecyclerView()
+
+
+
+
         setupStatus()
 
 
@@ -308,6 +387,7 @@ class ClientFragment : Fragment() {
             }, onLoading = {
 
             }, {
+                brokerList.clear()
                 if (it.status.equals(200)) {
                     for (productName in it.data) {
                         brokerList.add(productName.BrokerName)
@@ -333,17 +413,27 @@ class ClientFragment : Fragment() {
     private fun SubscribeToStatus() {
         viewModel.updateCustomerStatus.observe(viewLifecycleOwner, Event.EventObserver(
             onError = {
-                Global.hideDialog()
+               // Global.hideDialog()
+                alertDialog!!.dismiss()
                 Toasty.error(requireContext(), it).show()
                 Log.e(ClientFragment.TAG, "SubscribeToStatus:$it ")
             }, onLoading = {
-                Global.showDialog(requireActivity())
+               // Global.showDialog(requireActivity())
+                           alertDialog!!.show()
 
             }, {
-                Global.hideDialog()
+             //   Global.hideDialog()
                 //  Toasty.success(requireContext(),it)
+                alertDialog!!.dismiss()
                 if (it.status.equals(200)) {
                     Toasty.success(requireContext(), it.message, Toasty.LENGTH_SHORT).show()
+                    hashMap[Global.PAYLOAD_EMPLOYEE_ID] = Prefs.getInt(Global.ID)
+                    hashMap[Global.PAYLOAD_TYPE] = statusName
+                    hashMap[Global.PAYLOAD_FROM_DATE] = startDate
+                    hashMap[Global.PAYLOAD_TO_DATE] = endDate
+                    viewModel.getClientALlFilter(hashMap)
+                    subscribeToFilterObserver()
+                    setUpRecyclerView()
 
                 } else {
                     Toasty.error(requireContext(), it.message).show()
@@ -359,36 +449,9 @@ class ClientFragment : Fragment() {
     }
 
 
-    private fun subscribeToObserver() {
 
 
-        viewModel.clientAll.observe(viewLifecycleOwner, Event.EventObserver(
-            onError = {
-                Global.hideDialog()
-                Toasty.error(requireContext(), it).show()
-            }, onLoading = {
-                Global.showDialog(requireActivity())
 
-            }, {
-                Global.hideDialog()
-                //  Toasty.success(requireContext(),it)
-                if (it.status.equals(200)) {
-                    if (it.data.isEmpty()) {
-                        binding!!.nodataFound.visibility = View.VISIBLE
-                        announcementAdapter.announcement = it.data
-                    } else {
-                        binding!!.nodataFound.visibility = View.GONE
-                        announcementAdapter.announcement = it.data
-                    }
-
-
-                } else {
-                    Toasty.error(requireContext(), it.message).show()
-                }
-
-            }
-        ))
-    }
 
     private fun subscribeToFilterObserver() {
 
@@ -410,7 +473,8 @@ class ClientFragment : Fragment() {
                     } else {
                         binding!!.nodataFound.visibility = View.GONE
                         if (brokerName.isEmpty()){
-
+                            localClientList.clear()
+                            localClientList.addAll(it.data)
                             announcementAdapter.announcement = it.data
                         }else{
 
@@ -427,6 +491,8 @@ class ClientFragment : Fragment() {
                             }else{
                                 binding!!.nodataFound.visibility = View.GONE
                             }
+                            localClientList.clear()
+                            localClientList.addAll(masterList)
                             announcementAdapter.announcement = masterList
                         }
 
@@ -441,5 +507,84 @@ class ClientFragment : Fragment() {
         ))
     }
 
+
+    override fun onResume() {
+        super.onResume()
+//        brokerList.clear()
+//        brokerList.add(0,"All")
+//        brokerList.add(1,"Master Distributor")
+//        brokerList.add(2,"Distributor")
+        statusList.clear()
+        statusList=arrayListOf<String>("All","Pending","Approved","Rejected","Connect","Disconnect")
+        val adapter: ArrayAdapter<String> =
+            ArrayAdapter<String>(
+                requireContext(),
+                android.R.layout.simple_spinner_dropdown_item,
+                statusList
+            )
+        binding!!.acStatus.setSelection(0)
+        binding!!.acStatus.setAdapter<ArrayAdapter<String>>(adapter)
+        binding!!.acStatus.text=null
+        binding!!.acBrokerName.text=null
+
+       // binding!!.acStatus.setText("All")
+    }
+
+    private fun subscribeToObserver() {
+
+
+        viewModel.clientAll.observe(viewLifecycleOwner, Event.EventObserver(
+            onError = {
+                // Global.hideDialog()
+                alertDialog!!.dismiss()
+                Toasty.error(requireContext(), it).show()
+            }, onLoading = {
+                alertDialog!!.show()
+                //   Global.showDialog(requireActivity())
+
+            }, {
+//                Global.hideDialog()
+                alertDialog!!.dismiss()
+                //  Toasty.success(requireContext(),it)
+                if (it.status.equals(200)) {
+                    if (it.data.isEmpty()) {
+                        binding!!.nodataFound.visibility = View.VISIBLE
+                        announcementAdapter.announcement = it.data
+                    } else {
+                        binding!!.nodataFound.visibility = View.GONE
+                        if (brokerName.isEmpty()){
+                            localClientList.clear()
+                            localClientList.addAll(it.data)
+                            announcementAdapter.announcement = it.data
+                        }else{
+
+                            var masterList = mutableListOf<DataCLient>()
+
+                            for (master in it.data) {
+                                if (master.BrokerName == brokerName) {
+
+                                    masterList.add(master)
+                                }
+                            }
+                            if (masterList.isEmpty()){
+                                binding!!.nodataFound.visibility = View.VISIBLE
+                            }else{
+                                binding!!.nodataFound.visibility = View.GONE
+                            }
+                            localClientList.clear()
+                            localClientList.addAll(masterList)
+                            announcementAdapter.announcement = masterList
+                        }
+
+                    }
+
+
+                } else {
+                    Toasty.error(requireContext(), it.message).show()
+                }
+
+            }
+        ))
+    }
 
 }

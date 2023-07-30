@@ -34,6 +34,8 @@ class ClientStatusRemarkDialog : Fragment() {
     var clientStatusRemarkAdapter = ClientStatusRemarkAdapter()
 
 
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

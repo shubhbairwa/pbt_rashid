@@ -9,36 +9,30 @@ import android.view.*
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.paybacktraders.paybacktraders.R
 import com.paybacktraders.paybacktraders.activity.NavigationDrawerActivity
+import com.paybacktraders.paybacktraders.activity.ui.AddProductActivity
+import com.paybacktraders.paybacktraders.activity.ui.SearchActivity
 import com.paybacktraders.paybacktraders.adapters.ContactUsAdapter
 import com.paybacktraders.paybacktraders.apihelper.Event
-import com.paybacktraders.paybacktraders.databinding.FragmentGalleryBinding
+import com.paybacktraders.paybacktraders.databinding.FragmentEnquiryBinding
+import com.paybacktraders.paybacktraders.global.Global
+
 import com.paybacktraders.paybacktraders.model.model.apiresponse.DataContactUs
+import com.paybacktraders.paybacktraders.model.model.apiresponse.DataWalletHistory
 import com.paybacktraders.paybacktraders.viewmodel.MainViewModel
 import es.dmoral.toasty.Toasty
+import java.util.*
 
 
 class EnquiryFragment : Fragment() {
 
-    private var _binding: FragmentGalleryBinding? = null
-    =======
-    import android.os.Bundle
-    import android.view.LayoutInflater
-    import android.view.View
-    import android.view.ViewGroup
-    import android.widget.TextView
-    import androidx.fragment.app.Fragment
-    import androidx.lifecycle.ViewModelProvider
-    import com.paybacktraders.paybacktraders.databinding.FragmentEnquiryBinding
-
-    class EnquiryFragment : Fragment() {
-
-        private var _binding: FragmentGalleryBinding? = null
+        private var _binding: FragmentEnquiryBinding? = null
 
         // This property is only valid between onCreateView and
         // onDestroyView.
@@ -49,6 +43,15 @@ class EnquiryFragment : Fragment() {
 
         var alertDialog: AlertDialog? = null
         var builderAlert: AlertDialog.Builder? = null
+        private var itemList: MutableList<DataContactUs> = mutableListOf()
+
+        private fun filterList(query: String) {
+            val filteredList = itemList.filter { item ->
+                item.Name.toLowerCase(Locale.ENGLISH).contains(query.toLowerCase(Locale.ENGLISH))
+            }
+
+            contactUsAdapter.filterData(filteredList)
+        }
 
 
         private fun setUpLoadingDialog(context: Context) {
@@ -67,7 +70,7 @@ class EnquiryFragment : Fragment() {
                 ViewModelProvider(this).get(GalleryViewModel::class.java)
 
 
-            _binding = FragmentGalleryBinding.inflate(inflater, container, false)
+            _binding = FragmentEnquiryBinding.inflate(inflater, container, false)
             val root: View = binding.root
 
             //   val textView: TextView = binding.textGallery
@@ -91,13 +94,58 @@ class EnquiryFragment : Fragment() {
 
         override fun onPrepareOptionsMenu(menu: Menu) {
             val item: MenuItem = menu.findItem(R.id.action_settings)
+            val itemSearch: MenuItem = menu.findItem(R.id.searchMenu)
+            val searchView = itemSearch?.actionView as SearchView
+
+            // Set up the SearchView's query text listener
+            searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String): Boolean {
+                    return false
+                }
+
+                override fun onQueryTextChange(newText: String): Boolean {
+                    // Filter the adapter based on the search query
+                    // masterDistributorAdapter.filter.filter(newText)
+                    //  Log.e(MasterDistributorFragment.TAG, "onQueryTextChange: $newText", )
+                    filterList(newText)
+                    return true
+                }
+            })
             item.isVisible = false
+            itemSearch.isVisible=true
+        }
+
+        override fun onOptionsItemSelected(item: MenuItem): Boolean {
+            when (item.itemId) {
+                R.id.action_settings -> {
+                    Intent(activity, AddProductActivity::class.java).also {
+                        startActivity(it)
+                    }
+                    return true
+                }
+
+                R.id.searchMenu -> {
+                    //   Toasty.info(requireContext(),"Date").show()
+                    Intent(requireActivity(), SearchActivity::class.java).also {
+                        it.putExtra(Global.INTENT_WHERE, Global.SEARCH_ENQUIRY)
+                        startActivity(it)
+
+                    }
+                    return true
+                }
+            }
+
+
+            return super.onOptionsItemSelected(item)
+
+
         }
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
             super.onViewCreated(view, savedInstanceState)
             viewModel = (activity as NavigationDrawerActivity).viewModel
-            _binding = FragmentGalleryBinding.bind(view)
+            _binding = FragmentEnquiryBinding.bind(view)
             setUpLoadingDialog(requireContext())
             viewModel.getcontactusall()
             subscribeToObserver()
@@ -117,7 +165,10 @@ class EnquiryFragment : Fragment() {
                 startActivity(intent)
             }
 
+
         }
+
+
 
         private fun setUpRecyclerView() = binding.rvContactUs.apply {
             adapter = contactUsAdapter
@@ -138,6 +189,8 @@ class EnquiryFragment : Fragment() {
                             binding.nodataFound.visibility = View.VISIBLE
                         } else {
                             binding.nodataFound.visibility = View.GONE
+                            itemList.clear()
+                            itemList.addAll(it.data)
                             contactUsAdapter.product = it.data as MutableList<DataContactUs>
                         }
                     } else {
@@ -149,4 +202,5 @@ class EnquiryFragment : Fragment() {
 
 
     }
-}
+
+

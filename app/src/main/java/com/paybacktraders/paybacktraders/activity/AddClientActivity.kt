@@ -11,6 +11,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -81,6 +82,11 @@ class AddClientActivity : AppCompatActivity() {
         binding.closeDilogBt.setOnClickListener {
             finish()
         }
+        if (picturePath.isEmpty()) {
+            binding.ivSetImage.visibility = View.GONE
+        } else {
+            binding.ivSetImage.visibility = View.VISIBLE
+        }
 
 
 
@@ -115,23 +121,27 @@ class AddClientActivity : AppCompatActivity() {
     private fun subscribeToObserver() {
         viewModel.brokerAll.observe(this, Event.EventObserver(
             onError = {
-                Toasty.error(this, it,Toasty.LENGTH_SHORT).show()
+                Toasty.error(this, it, Toasty.LENGTH_SHORT).show()
             }, onLoading = {
 
             }, {
-                if (it.status.equals(200)){
-                    for (productName in it.data){
+                if (it.status.equals(200)) {
+                    for (productName in it.data) {
                         brokerList.add(productName.BrokerName)
                     }
                     val adapter: ArrayAdapter<String> =
-                        ArrayAdapter<String>(this, R.layout.simple_dropdown_item_1line, brokerList)
+                        ArrayAdapter<String>(
+                            this,
+                            R.layout.simple_dropdown_item_1line,
+                            brokerList
+                        )
                     binding.acBrokerName.setAdapter<ArrayAdapter<String>>(adapter)
 
                     binding.acBrokerName.setOnItemClickListener { parent, view, position, id ->
                         brokerName = brokerList[position]
                     }
-                }else{
-                    Toasty.error(this, it.message,Toasty.LENGTH_SHORT).show()
+                } else {
+                    Toasty.error(this, it.message, Toasty.LENGTH_SHORT).show()
                 }
             }
         ))

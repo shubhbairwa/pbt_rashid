@@ -13,6 +13,7 @@ import com.paybacktraders.paybacktraders.R
 import com.paybacktraders.paybacktraders.databinding.ClientItemListLayoutBinding
 import com.paybacktraders.paybacktraders.global.Global
 import com.paybacktraders.paybacktraders.model.model.apiresponse.DataCLient
+import com.paybacktraders.paybacktraders.model.model.apiresponse.DataEmployeeAll
 import com.paybacktraders.paybacktraders.model.model.apiresponse.DataProduct
 
 
@@ -23,6 +24,11 @@ class ClientAdapter :
     private var onItemClickListener: ((DataCLient) -> Unit)? = null
     fun setOnItemClickListener(listener: (DataCLient) -> Unit) {
         onItemClickListener = listener
+    }
+
+    private var onFullItemClickListener: ((DataCLient) -> Unit)? = null
+    fun setOnFullItemClickListener(listener: (DataCLient) -> Unit) {
+        onFullItemClickListener = listener
     }
 
     private var onRemarkClickListener: ((DataCLient) -> Unit)? = null
@@ -63,9 +69,17 @@ class ClientAdapter :
             binding.apply {
                 tvCustomerName.text = currentAnnouncement.FullName
                 tvCustomermobile.text = currentAnnouncement.Mobile
+                tvProductName.text=currentAnnouncement.BrokerName
                 tvCustomerStatus.setOnClickListener {
                     onItemClickListener?.let { click->
                         click(currentAnnouncement)
+                    }
+                }
+
+                itemView.setOnClickListener {
+                    onFullItemClickListener?.let { click->
+                        click(currentAnnouncement)
+
                     }
                 }
 
@@ -109,6 +123,10 @@ class ClientAdapter :
     var announcement: MutableList<DataCLient>
         get() = differ.currentList
         set(value) = differ.submitList(value)
+
+    fun filterData(filteredList: List<DataCLient>) {
+        differ.submitList(filteredList)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AnnouncementViewHolder {
         return AnnouncementViewHolder(

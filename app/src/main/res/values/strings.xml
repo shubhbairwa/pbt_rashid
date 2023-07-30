@@ -4,8 +4,8 @@
     <string name="dashboard">Dashboard</string>
     <string name="distributor">Distributor</string>
     <string name="master_distributor">Master Distributor</string>
-    <string name="client">client</string>
-    <string name="product">product</string>
+    <string name="client">Client</string>
+    <string name="product">Product</string>
 
     <string-array name="user_type">
         <item>Admin</item>
@@ -51,5 +51,12 @@
     <string name="otp_verification">OTP Verification</string>
     <string name="resend">Resend</string>
     <string name="enter_email_id">Enter Email ID</string>
+    <string name="wallet_history">Wallet History</string>
+    <string name="wallet_withdrawal">Wallet Withdrawl</string>
+    <string name="visit_site">PayBack</string>
+    <string name="supprt">Support</string>
+    <string name="copyright">Copyright @ 2023 PayBack. All Rights Reserved</string>
+    <string name="refresh">refresh</string>
+    <string name="broker">Broker</string>
 
 </resources>

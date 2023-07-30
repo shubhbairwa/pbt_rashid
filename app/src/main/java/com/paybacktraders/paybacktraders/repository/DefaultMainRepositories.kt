@@ -33,6 +33,34 @@ class DefaultMainRepositories : MainRepos {
         }
     }
 
+    override suspend fun getWalletHistory(data: HashMap<String, Any>)= withContext(Dispatchers.IO){
+        safeCall {
+            val response = ApiClient().service.getWalletHistory(data)
+            Resource.Success(response.body()!!)
+        }
+    }
+
+    override suspend fun withdrawlApproval(data: HashMap<String, Any>)= withContext(Dispatchers.IO){
+        safeCall {
+            val response = ApiClient().service.withdrawlApproval(data)
+            Resource.Success(response.body()!!)
+        }
+    }
+
+    override suspend fun sendWithDrawlrequest(data: HashMap<String, Any>)= withContext(Dispatchers.IO){
+        safeCall {
+            val response = ApiClient().service.sendWithDrawlrequest(data)
+            Resource.Success(response.body()!!)
+        }
+    }
+
+    override suspend fun getWithdrawlRequestList(data: HashMap<String, Any>)= withContext(Dispatchers.IO){
+        safeCall {
+            val response = ApiClient().service.getWithdrawlRequestList(data)
+            Resource.Success(response.body()!!)
+        }
+    }
+
     override suspend fun getDistributor(data: HashMap<String, Any>)= withContext(Dispatchers.IO){
         safeCall {
             val response = ApiClient().service.getDistributor(data)

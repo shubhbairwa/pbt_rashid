@@ -12,6 +12,7 @@ import java.util.*
 
 object Global {
     const val INTENT_WHERE = "where"
+    const val INTENT_EDIT_WHERE = "edit_where"
     lateinit var dialog: Dialog
 
     fun showDialog(context: Activity) {
@@ -39,11 +40,17 @@ object Global {
    // const val BASE_URL = "http://45.132.241.50:8001"
 
 /********TESTMOODEURL**********/
-   // const val BASE_URL = "https://paybackbytrades.in:8002/"
+    const val BASE_URL = "https://paybackbytrades.in:8002/"
+    const val PDF_BASE_URL = "https://paybackbytrades.in:8002"
 
     /********LIVEMODEURL**********/
 
-      const val BASE_URL = "https://paybackbytrades.in:8000/"
+    //  const val BASE_URL = "https://paybackbytrades.in:8000/"
+    //  const val PDF_BASE_URL = "https://paybackbytrades.in:8000"
+
+
+
+
 
     /**
     "id": 1,
@@ -63,6 +70,22 @@ object Global {
 
      **/
 
+
+   /*{
+        "EmployeeId": "1",
+        "FromDate": "",
+        "ToDate": ""
+    }
+    */
+
+
+  /*  {
+        "EmployeeId":2,
+        "USDT":"TRC20",
+        "Amount":"10",
+        "Remarks":"want to withdraw 10 usd from wallet"
+    }*/
+
     const val ID = "_id"
     const val EmployeeCode = "_EmployeeCode"
     const val UserName = "_UserName"
@@ -78,14 +101,28 @@ object Global {
     const val WalletAmount = "_WalletAmount"
     const val Datetime = "_Datetime"
     const val PAYLOAD_EMPLOYEE_ID="EmployeeId"
+    const val PAYLOAD_USDT="USDT"
+    const val PAYLOAD_AMOUNT="Amount"
+    const val PAYLOAD_REMARKS="Remarks"
     const val PAYLOAD_ID="id"
     const val PAYLOAD_TYPE="Type"
     const val PAYLOAD_FROM_DATE="FromDate"
     const val PAYLOAD_TO_DATE="ToDate"
 
     const val MASTER_DIST_STRING="Master Distributor"
+    const val MASTER_EDIT_DIST_STRING="Master EDit Distributor"
     const val DISTRIBUTOR_STRING="Distributor"
+    const val DISTRIBUTOR_EDIT_STRING="Distributor_Edit"
     const val ADMIN_STRING="Admin"
+    const val REMEMBER_ME="_RememberMe"
+
+
+    const val SEARCH_DIST="distSearch"
+    const val SEARCH_CLIENT="clientSearch"
+    const val SEARCH_PRODUCT="productSearch"
+    const val SEARCH_ENQUIRY="enquirySearch"
+    const val SEARCH_withdrawl="withdrawlSearch"
+    const val SEARCH_WALLET_HISTORY="walletHistorySearch"
 
 
     fun convertToCustomFormat(dateStr: String?): String {

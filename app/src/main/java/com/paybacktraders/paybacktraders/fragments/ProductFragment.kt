@@ -6,18 +6,24 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.paybacktraders.paybacktraders.R
 import com.paybacktraders.paybacktraders.activity.*
 import com.paybacktraders.paybacktraders.activity.ui.AddProductActivity
+import com.paybacktraders.paybacktraders.activity.ui.SearchActivity
 import com.paybacktraders.paybacktraders.adapters.ProductAdapter
 import com.paybacktraders.paybacktraders.apihelper.Event
 import com.paybacktraders.paybacktraders.databinding.FragmentProductBinding
 import com.paybacktraders.paybacktraders.global.Global
+import com.paybacktraders.paybacktraders.model.model.apiresponse.DataEmployeeAll
+import com.paybacktraders.paybacktraders.model.model.apiresponse.DataProduct
 import com.paybacktraders.paybacktraders.viewmodel.MainViewModel
 import com.pixplicity.easyprefs.library.Prefs
 import es.dmoral.toasty.Toasty
+import java.util.*
+import kotlin.collections.HashMap
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -39,6 +45,15 @@ class ProductFragment : Fragment() {
     var productAdapter = ProductAdapter()
      var alertDialog: AlertDialog?=null
     var builderAlert:AlertDialog.Builder?=null
+    private var itemList: MutableList<DataProduct> = mutableListOf()
+
+    private fun filterList(query: String) {
+        val filteredList = itemList.filter { item ->
+            item.ProductName.toLowerCase(Locale.ENGLISH).contains(query.toLowerCase(Locale.ENGLISH))
+        }
+
+        productAdapter.filterData(filteredList)
+    }
 
 
     override fun onCreateView(
@@ -64,6 +79,22 @@ class ProductFragment : Fragment() {
     override fun onPrepareOptionsMenu(menu: Menu) {
         val item: MenuItem = menu.findItem(R.id.action_settings)
         val itemSearch: MenuItem = menu.findItem(R.id.searchMenu)
+        val searchView = itemSearch?.actionView as SearchView
+
+        // Set up the SearchView's query text listener
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                // Filter the adapter based on the search query
+                // masterDistributorAdapter.filter.filter(newText)
+              //  Log.e(MasterDistributorFragment.TAG, "onQueryTextChange: $newText", )
+                filterList(newText)
+                return true
+            }
+        })
         item.isVisible = true
         itemSearch.isVisible=true
     }
@@ -78,10 +109,12 @@ class ProductFragment : Fragment() {
             }
 
             R.id.searchMenu -> {
-//                Intent(activity, AddProductActivity::class.java).also {
-//                    startActivity(it)
-//                }
-                Toasty.info(requireContext(),"search").show()
+                //   Toasty.info(requireContext(),"Date").show()
+                Intent(requireActivity(), SearchActivity::class.java).also {
+                    it.putExtra(Global.INTENT_WHERE, Global.SEARCH_PRODUCT)
+                    startActivity(it)
+
+                }
                 return true
             }
         }
@@ -167,6 +200,7 @@ class ProductFragment : Fragment() {
             /*Fire!*/startActivity(Intent.createChooser(intent, "Share Via"))
         }
 
+
     }
 
     override fun onResume() {
@@ -176,8 +210,8 @@ class ProductFragment : Fragment() {
             subscribeToObserver()
         } else {
             hashMap[Global.PAYLOAD_EMPLOYEE_ID] = Prefs.getInt(Global.ID)
-            viewModel.getProductAllFilter(hashMap)
-            subscribeToFIlterObserver()
+            viewModel.getProductAll()
+            subscribeToObserver()
         }
 
 
@@ -211,6 +245,8 @@ class ProductFragment : Fragment() {
                         productAdapter.product = it.data
                     } else {
                         binding!!.nodataFound.visibility = View.GONE
+                        itemList.clear()
+                        itemList.addAll(it.data)
                         productAdapter.product = it.data
                     }
 

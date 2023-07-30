@@ -4,20 +4,27 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.PopupMenu
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.paybacktraders.paybacktraders.R
 import com.paybacktraders.paybacktraders.activity.*
 import com.paybacktraders.paybacktraders.activity.ui.AddProductActivity
+import com.paybacktraders.paybacktraders.activity.ui.SearchActivity
 import com.paybacktraders.paybacktraders.adapters.MasterDistributorAdapter
 import com.paybacktraders.paybacktraders.apihelper.Event
 import com.paybacktraders.paybacktraders.databinding.FragmentDistributorBinding
 import com.paybacktraders.paybacktraders.databinding.FragmentMasterDistributorBinding
 import com.paybacktraders.paybacktraders.databinding.FragmentProductBinding
 import com.paybacktraders.paybacktraders.global.Global
+import com.paybacktraders.paybacktraders.model.model.apiresponse.DataEmployeeAll
 import com.paybacktraders.paybacktraders.viewmodel.MainViewModel
 import com.pixplicity.easyprefs.library.Prefs
 import es.dmoral.toasty.Toasty
+import java.util.*
+import kotlin.collections.HashMap
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -36,6 +43,9 @@ class DistributorFragment : Fragment() {
     var where: String = ""
     var hashMap = HashMap<String, Any>()
     var masterDistributorAdapter = MasterDistributorAdapter()
+    private var itemList: MutableList<DataEmployeeAll> = mutableListOf()
+    var alertDialog: AlertDialog?=null
+    var builderAlert: AlertDialog.Builder?=null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,6 +54,15 @@ class DistributorFragment : Fragment() {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_distributor, container, false)
     }
+
+    private fun filterList(query: String) {
+        val filteredList = itemList.filter { item ->
+            item.FullName.toLowerCase(Locale.ENGLISH).contains(query.toLowerCase(Locale.ENGLISH))
+        }
+
+        masterDistributorAdapter.filterData(filteredList)
+    }
+
 
     companion object {
         private const val TAG = "DistributorFragment"
@@ -78,6 +97,23 @@ class DistributorFragment : Fragment() {
     override fun onPrepareOptionsMenu(menu: Menu) {
         val item: MenuItem = menu.findItem(R.id.action_settings)
         val itemSearch: MenuItem = menu.findItem(R.id.searchMenu)
+        val searchView = itemSearch?.actionView as SearchView
+
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                // Filter the adapter based on the search query
+                // masterDistributorAdapter.filter.filter(newText)
+                Log.e(TAG, "onQueryTextChange: $newText")
+                filterList(newText)
+                return true
+            }
+        })
+
         item.isVisible = false
         itemSearch.isVisible = true
 
@@ -94,7 +130,8 @@ class DistributorFragment : Fragment() {
             }
 
             R.id.searchMenu -> {
-                Intent(activity, AddProductActivity::class.java).also {
+                Intent(activity, SearchActivity::class.java).also {
+                    it.putExtra(Global.INTENT_WHERE,Global.SEARCH_DIST)
                     startActivity(it)
                 }
                 return true
@@ -122,12 +159,16 @@ class DistributorFragment : Fragment() {
         }
         _binding = FragmentDistributorBinding.bind(view)
 
+        builderAlert=AlertDialog.Builder(requireContext())
+        builderAlert!!.setView(R.layout.dialog_alert)
+        builderAlert!!.setCancelable(false)
+        alertDialog=  builderAlert!!.create()
 
-        hashMap[Global.PAYLOAD_ID] = Prefs.getInt(Global.ID)
-        // viewModel.getDashboardData(hashMap)
-        viewModel.getDistributor(hashMap)
-        subscribeToObserver()
-        setUpRecyclerView()
+
+
+
+
+
         binding!!.addMasterDistributor.setOnClickListener {
             Intent(activity, AddDistributorActivity::class.java).also {
                 it.putExtra(Global.INTENT_WHERE,Global.DISTRIBUTOR_STRING)
@@ -136,17 +177,34 @@ class DistributorFragment : Fragment() {
         }
 
         masterDistributorAdapter.setOnItemClickListener {data->
-            val bundle=Bundle().apply {
-                putSerializable("dist",data)
+//            val bundle=Bundle().apply {
+//                putSerializable("dist",data)
+//            }
+//            Intent(activity,UpdateDistributorDetailsActivity::class.java).also {
+//                it.putExtra(Global.INTENT_WHERE,Global.DISTRIBUTOR_STRING)
+//                it.putExtra("dist",data)
+//                startActivity(it)
+//            }
+
+            val bundle = Bundle().apply {
+                putSerializable("dist", data)
             }
-            Intent(activity,UpdateDistributorDetailsActivity::class.java).also {
-                it.putExtra(Global.INTENT_WHERE,Global.DISTRIBUTOR_STRING)
-                it.putExtra("dist",data)
+
+            Intent(activity, DistributorDetailsActivity::class.java).also {
+                //   it.putExtra(Global.INTENT_WHERE, Global.MASTER_DIST_STRING)
+                it.putExtra("dist", data)
                 startActivity(it)
             }
         }
 
+        masterDistributorAdapter.setOnMenuItemClickListener { dataEmployeeAll, masterDistributionItemListLayoutBinding ->
+            //  masterDistributorAdapter.sho(masterDistributionItemListLayoutBinding.ivMenuPopUp)
+            showPopupMenuRecycler(masterDistributionItemListLayoutBinding.ivMenuPopUp,dataEmployeeAll)
+        }
+
     }
+
+
 
     private fun setUpRecyclerView() = binding?.rvDistributor?.apply {
         adapter = masterDistributorAdapter
@@ -159,19 +217,24 @@ class DistributorFragment : Fragment() {
 
         viewModel.employeeAll.observe(viewLifecycleOwner, Event.EventObserver(
             onError = {
-                Global.hideDialog()
+                alertDialog!!.dismiss()
+               // Global.hideDialog()
                 Toasty.error(requireContext(), it).show()
             }, onLoading = {
-                Global.showDialog(requireActivity())
+                           alertDialog!!.show()
+               // Global.showDialog(requireActivity())
 
             }, {
-                Global.hideDialog()
+                alertDialog!!.dismiss()
+              //  Global.hideDialog()
                 //  Toasty.success(requireContext(),it)
                 if (it.status.equals(200)) {
                     if (it.data.isEmpty()) {
                         binding!!.nodataFound.visibility = View.VISIBLE
                         masterDistributorAdapter.masterDistributor = it.data
                     } else {
+                        itemList.clear()
+                        itemList.addAll(it.data)
                         binding!!.nodataFound.visibility = View.GONE
                         masterDistributorAdapter.masterDistributor = it.data
                     }
@@ -185,5 +248,61 @@ class DistributorFragment : Fragment() {
         ))
     }
 
+
+    private fun showPopupMenuRecycler(view: View,data: DataEmployeeAll) {
+        val popupMenu = PopupMenu(view.context, view)
+        popupMenu.menuInflater.inflate(R.menu.distributor_popup_menu, popupMenu.menu)
+
+        popupMenu.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.editDist -> {
+                    Intent(activity, UpdateDistributorDetailsActivity::class.java).also {
+                        if (data.Role.equals(Global.DISTRIBUTOR_STRING,ignoreCase = true)){
+                            it.putExtra(Global.INTENT_WHERE,Global.DISTRIBUTOR_STRING)
+                        }else{
+                            it.putExtra(Global.INTENT_WHERE, Global.MASTER_DIST_STRING)
+                        }
+
+                        //it.putExtra(Global.INTENT_EDIT_WHERE, Global.MASTER_EDIT_DIST_STRING)
+                        it.putExtra("dist", data)
+                        startActivity(it)
+                    }
+                    // Handle option 1 click
+                    true
+                }
+                R.id.menuViewDistributors -> {
+                    // Handle option 2 click
+                    Intent(activity, ListOfDistributorActivity::class.java).also {
+                        it.putExtra(Global.ID, data.id)
+                        startActivity(it)
+                    }
+                    true
+                }
+                R.id.menuViewClients -> {
+                    // Handle option 3 click
+
+                    Intent(activity, ListOfCustomerDetailActivity::class.java).also {
+                        it.putExtra(Global.ID, data.id)
+                        startActivity(it)
+                    }
+                    true
+                }
+                else -> false
+            }
+        }
+
+        // Show the PopupMenu
+        popupMenu.show()
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        hashMap[Global.PAYLOAD_ID] = Prefs.getInt(Global.ID)
+        // viewModel.getDashboardData(hashMap)
+        viewModel.getDistributor(hashMap)
+        subscribeToObserver()
+        setUpRecyclerView()
+    }
 
 }

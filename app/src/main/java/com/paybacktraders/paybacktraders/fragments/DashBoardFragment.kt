@@ -11,10 +11,13 @@ import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.gson.JsonObject
 import com.paybacktraders.paybacktraders.R
 import com.paybacktraders.paybacktraders.activity.AdminActivity
+import com.paybacktraders.paybacktraders.activity.CustomerDetailsActivity
 import com.paybacktraders.paybacktraders.activity.MasterDistributorActivity
 import com.paybacktraders.paybacktraders.activity.NavigationDrawerActivity
 import com.paybacktraders.paybacktraders.adapters.ClientAdapter
@@ -22,6 +25,7 @@ import com.paybacktraders.paybacktraders.apihelper.Event
 import com.paybacktraders.paybacktraders.databinding.FragmentDashBoardBinding
 import com.paybacktraders.paybacktraders.global.Global
 import com.paybacktraders.paybacktraders.model.model.apirequestbody.BodyClientStatus
+import com.paybacktraders.paybacktraders.model.model.apiresponse.DataCLient
 import com.paybacktraders.paybacktraders.viewmodel.MainViewModel
 import com.pixplicity.easyprefs.library.Prefs
 import es.dmoral.toasty.Toasty
@@ -50,6 +54,8 @@ class DashBoardFragment : Fragment(R.layout.fragment_dash_board) {
         item.isVisible = false
     }
 
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -70,9 +76,46 @@ class DashBoardFragment : Fragment(R.layout.fragment_dash_board) {
 
         hashMap[Global.PAYLOAD_ID] = Prefs.getInt(Global.ID)
         viewModel.getDashboardData(hashMap)
-        viewModel.getClientAll()
+        if (where.equals("admin", ignoreCase = true)) {
+
+
+            hashMap[Global.PAYLOAD_EMPLOYEE_ID] = Prefs.getInt(Global.ID)
+            hashMap[Global.PAYLOAD_TYPE] = "All"
+            hashMap[Global.PAYLOAD_FROM_DATE] = ""
+            hashMap[Global.PAYLOAD_TO_DATE] = ""
+
+            viewModel.getClientALlFilter(hashMap)
+            subscribeToFilterObserver()
+        } else {
+            hashMap[Global.PAYLOAD_EMPLOYEE_ID] = Prefs.getInt(Global.ID)
+            hashMap[Global.PAYLOAD_TYPE] = "All"
+            hashMap[Global.PAYLOAD_FROM_DATE] = ""
+            hashMap[Global.PAYLOAD_TO_DATE] = ""
+
+            viewModel.getClientALlFilter(hashMap)
+            subscribeToFilterObserver()
+        }
+
+    //    viewModel.getClientAll()
+
+        var jsonObject = JsonObject()
+        jsonObject.addProperty("id", Prefs.getInt(Global.ID))
+        viewModel.getProfileDetailOneApi(jsonObject)
+
+       // bindToObserver()
         subscribeToObserver()
         setUpRecyclerView()
+
+        announcementAdapter.setOnFullItemClickListener { data->
+            val bundle=Bundle().apply {
+                putParcelable("data",data)
+            }
+            Intent(requireActivity(), CustomerDetailsActivity::class.java).also {
+                it.putExtras(bundle)
+                startActivity(it)
+
+            }
+        }
         announcementAdapter.setOnItemClickListener {
             if (it.ConnectionStatus.equals("Connect", ignoreCase = true)) {
                 Toasty.success(requireContext(), "Already Connected", Toasty.LENGTH_SHORT).show()
@@ -109,12 +152,17 @@ class DashBoardFragment : Fragment(R.layout.fragment_dash_board) {
         }
 
         announcementAdapter.setOnAttachmentClickListener {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(it.PaymentProof))
+            if (it.PaymentProof.isEmpty()){
+                Toasty.info(requireContext(),"NO Data Found").show()
+            }else{
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(Global.PDF_BASE_URL+it.PaymentProof))
 
-            // Check if there's any app that can handle the Intent (e.g., Chrome)
+                // Check if there's any app that can handle the Intent (e.g., Chrome)
 
-            // Open the link in the Chrome browser
-            startActivity(intent)
+                // Open the link in the Chrome browser
+                startActivity(intent)
+            }
+
 
         }
 
@@ -211,12 +259,90 @@ class DashBoardFragment : Fragment(R.layout.fragment_dash_board) {
         ))
     }
 
+    private fun bindToObserver() {
+        viewModel.profileDeatil.observe(viewLifecycleOwner, Event.EventObserver(
+            onError = {
+                Global.hideDialog()
+                Toasty.error(requireActivity(),it, Toasty.LENGTH_SHORT).show()
+            },
+            onLoading = {
+                Global.showDialog(requireActivity())
+            }, onSuccess = {
+                    response ->
+                Global.hideDialog()
+                if (response.status == 200){
+                   // setData(response.data[0])
+                }else {
+                    Toast.makeText(requireActivity(), response.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        ))
+    }
+
     override fun onResume() {
         super.onResume()
         Log.e(TAG, "onResume: ")
 //        hashMap["id"] = Prefs.getInt(Global.ID)
 //        viewModel.getDashboardData(hashMap)
 //        subscribeToObserver()
+        (activity as AppCompatActivity).supportActionBar?.show()
+    }
 
+    private fun subscribeToFilterObserver() {
+
+
+        viewModel.clientFilter.observe(viewLifecycleOwner, Event.EventObserver(
+            onError = {
+                Global.hideDialog()
+               // alertDialog!!.dismiss()
+                Toasty.error(requireContext(), it).show()
+            }, onLoading = {
+                Global.showDialog(requireActivity())
+               // alertDialog!!.show()
+
+            }, {
+                Global.hideDialog()
+               // alertDialog!!.dismiss()
+                //  Toasty.success(requireContext(),it)
+                if (it.status.equals(200)) {
+                    if (it.data.isEmpty()) {
+                        binding!!.nodataFound.visibility = View.VISIBLE
+                        announcementAdapter.announcement = it.data
+                    } else {
+                        binding!!.nodataFound.visibility = View.GONE
+                        announcementAdapter.announcement = it.data
+//                        if (brokerName.isEmpty()){
+//                            localClientList.clear()
+//                            localClientList.addAll(it.data)
+//                            announcementAdapter.announcement = it.data
+//                        }else{
+//
+//                            var masterList = mutableListOf<DataCLient>()
+//
+//                            for (master in it.data) {
+//                                if (master.BrokerName == brokerName) {
+//
+//                                    masterList.add(master)
+//                                }
+//                            }
+//                            if (masterList.isEmpty()){
+//                                binding!!.nodataFound.visibility = View.VISIBLE
+//                            }else{
+//                                binding!!.nodataFound.visibility = View.GONE
+//                            }
+//                            localClientList.clear()
+//                            localClientList.addAll(masterList)
+//                            announcementAdapter.announcement = masterList
+//                        }
+
+                    }
+
+
+                } else {
+                    Toasty.error(requireContext(), it.message).show()
+                }
+
+            }
+        ))
     }
 }

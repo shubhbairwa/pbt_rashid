@@ -38,13 +38,24 @@
         <item
             android:id="@+id/financeFragment"
             android:icon="@drawable/ic_finance_logo"
-            android:title="@string/finance" />
+            android:title="@string/finance"
+            android:visible="false"/>
+
+        <item
+            android:id="@+id/walletHistoryFragment"
+            android:icon="@drawable/ic_wallet_history"
+            android:title="@string/wallet_history" />
+        <item
+            android:id="@+id/walletWithdrawlFragment"
+            android:icon="@drawable/ic_finance_logo"
+            android:title="@string/wallet_withdrawal" />
     </group>
 
 
         <item
             android:id="@+id/logout"
             android:icon="@drawable/ic_logout"
+            android:visible="false"
             android:title="@string/logout" />
 
     <item

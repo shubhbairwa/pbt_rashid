@@ -21,6 +21,15 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="@color/lightBlueAccent">
+            <ImageView
+                android:id="@+id/ivMenuPopUp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_kebab_menu"
+                android:layout_gravity="end"
+                android:layout_margin="8dp"
+
+                />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -59,6 +68,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:visibility="gone"
                     android:orientation="horizontal">
 
                     <TextView
@@ -184,6 +194,7 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:visibility="gone"
                     android:layout_weight="1">
 
                     <TextView

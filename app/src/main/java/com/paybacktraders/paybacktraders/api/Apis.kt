@@ -37,6 +37,22 @@ interface Apis {
     @Headers("Content-Type: application/json; charset=UTF-8")
     suspend fun getDashboardData(@Body data : HashMap<String,Any>): Response<DashBoardResponse>
 
+    @POST("employee/all_wallet_histroy")
+    @Headers("Content-Type: application/json; charset=UTF-8")
+    suspend fun getWalletHistory(@Body data : HashMap<String,Any>): Response<ResponseWalletHistory>
+
+    @POST("employee/withdrawal_approval")
+    @Headers("Content-Type: application/json; charset=UTF-8")
+    suspend fun withdrawlApproval(@Body data : HashMap<String,Any>): Response<ResponseGlobal>
+
+    @POST("employee/withdrawal_request")
+    @Headers("Content-Type: application/json; charset=UTF-8")
+    suspend fun sendWithDrawlrequest(@Body data : HashMap<String,Any>): Response<ResponseGlobal>
+
+    @POST("employee/withdrawal_request_filter")
+    @Headers("Content-Type: application/json; charset=UTF-8")
+    suspend fun getWithdrawlRequestList(@Body data : HashMap<String,Any>): Response<ResponseWithdrawlRequest>
+
     @POST("employee/all_filter")
     @Headers("Content-Type: application/json; charset=UTF-8")
     suspend fun getDistributor(@Body data : HashMap<String,Any>): Response<ResponseEmployeeAll>
@@ -60,6 +76,10 @@ interface Apis {
     @POST("product/all_filter")
     @Headers("Content-Type: application/json; charset=UTF-8")
     suspend fun getProductFilter(@Body data : HashMap<String,Any>): Response<ProductResponse>
+
+    @POST("product/all")
+    @Headers("Content-Type: application/json; charset=UTF-8")
+    suspend fun getProductAll(): Response<ProductResponse>
 
     @POST("product/create")
     @Headers("Content-Type: application/json; charset=UTF-8")

@@ -29,10 +29,9 @@ import com.paybacktraders.paybacktraders.repository.MainRepos
 import com.paybacktraders.paybacktraders.viewmodel.MainViewModel
 import com.paybacktraders.paybacktraders.viewmodel.MainViewModelProvider
 import com.pixplicity.easyprefs.library.Prefs
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-
-
+import es.dmoral.toasty.Toasty
+import kotlinx.coroutines.*
+import java.util.*
 
 
 class NavigationDrawerActivity : AppCompatActivity() {
@@ -52,12 +51,23 @@ class NavigationDrawerActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this, viewModelProviderfactory)[MainViewModel::class.java]
     }
 
+    override fun onStart() {
+        super.onStart()
+        supportActionBar?.show()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        supportActionBar?.show()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         where = Prefs.getString(Global.INTENT_WHERE)
         setUpViewModel()
         binding = ActivityNavigationDrawerBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        supportActionBar?.show()
 
 
         setSupportActionBar(binding.appBarNavigationDrawer.toolbar)
@@ -102,6 +112,10 @@ class NavigationDrawerActivity : AppCompatActivity() {
             NavHeaderNavigationDrawerBinding.bind(viewHeader)
         navViewHeaderBinding.tvUserName.text = Prefs.getString(Global.FullName)
         navViewHeaderBinding.tvUserEmail.text = Prefs.getString(Global.Email)
+//        binding.tvCharacterOfImageView.setText(
+//            Prefs.getString(Global.FullName)[0].toString().uppercase(Locale.getDefault())
+//        )
+       // navViewHeaderBinding.ivProfileUser.
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -110,6 +124,9 @@ class NavigationDrawerActivity : AppCompatActivity() {
       //  val distItem=menu.findItem(R.id.distributorFragment).setVisible(false)
         return true
     }
+
+
+
 
 
 
@@ -153,5 +170,7 @@ class NavigationDrawerActivity : AppCompatActivity() {
             .addToBackStack(null) // Optional: Add the fragment transaction to the back stack
             .commit()
     }
+
+
 
 }

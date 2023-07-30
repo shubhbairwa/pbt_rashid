@@ -11,6 +11,7 @@ import com.paybacktraders.paybacktraders.api.Apis
 import com.paybacktraders.paybacktraders.apihelper.Event
 import com.paybacktraders.paybacktraders.databinding.ActivityAddDistributorBinding
 import com.paybacktraders.paybacktraders.databinding.ActivityUpdateDistributorDetailsBinding
+import com.paybacktraders.paybacktraders.fragments.MasterDistributorFragment
 import com.paybacktraders.paybacktraders.global.Global
 import com.paybacktraders.paybacktraders.model.model.apirequestbody.BodyAddDistributor
 import com.paybacktraders.paybacktraders.model.model.apirequestbody.BodyUpdateDistributor
@@ -29,6 +30,7 @@ class UpdateDistributorDetailsActivity : AppCompatActivity() {
 
 
     var where = ""
+    var whereEditFromPopUp = ""
     lateinit var viewModel: MainViewModel
     var role = ""
     var dataEmployeeAll: DataEmployeeAll? = null
@@ -51,6 +53,7 @@ class UpdateDistributorDetailsActivity : AppCompatActivity() {
         autoFillDataComingFromDistributorItem(dataEmployeeAll!!)
 
         where = intent.getStringExtra(Global.INTENT_WHERE).toString()
+        whereEditFromPopUp = intent.getStringExtra(Global.INTENT_EDIT_WHERE).toString()
         role = if (where == Global.DISTRIBUTOR_STRING) {
             binding.toolbarDistributor.setTitle("Update Distributor")
 
@@ -95,6 +98,7 @@ class UpdateDistributorDetailsActivity : AppCompatActivity() {
                         viewModel.updateDistributor(bodyAddDistributor)
 
                     } else {
+
                         viewModel.updateDistributor(bodyAddMasterDistributor)
                     }
 
@@ -129,6 +133,11 @@ class UpdateDistributorDetailsActivity : AppCompatActivity() {
                 Global.hideDialog()
                 if (it.status.equals(200)) {
                     Toasty.success(this, it.message, Toasty.LENGTH_SHORT).show()
+                    if (where == Global.DISTRIBUTOR_STRING){
+
+                    }else{
+                    //   MasterDistributorFragment().refreshFragment()
+                    }
                     finish()
                 } else {
                     Toasty.error(this, it.message, Toasty.LENGTH_SHORT).show()

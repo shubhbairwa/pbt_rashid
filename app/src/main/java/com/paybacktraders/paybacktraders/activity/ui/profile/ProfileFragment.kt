@@ -9,25 +9,35 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.gson.JsonObject
 import com.paybacktraders.paybacktraders.R
+import com.paybacktraders.paybacktraders.activity.LoginActivity
 import com.paybacktraders.paybacktraders.activity.NavigationDrawerActivity
-import com.paybacktraders.paybacktraders.activity.ui.forgot.ForgotPasswordActivity
+
 import com.paybacktraders.paybacktraders.apihelper.Event
 import com.paybacktraders.paybacktraders.databinding.FragmentProfileBinding
-import com.paybacktraders.paybacktraders.fragments.forgotScreenfragment.ChangePasswordFragment
+import com.paybacktraders.paybacktraders.activity.ui.forget.forgetscreenfragment.ChangePasswordFragment
+
 import com.paybacktraders.paybacktraders.global.Global
 import com.paybacktraders.paybacktraders.model.model.apiresponse.DataEmployeeAll
 import com.paybacktraders.paybacktraders.viewmodel.MainViewModel
 import com.pixplicity.easyprefs.library.Prefs
 import es.dmoral.toasty.Toasty
-import java.lang.String
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.*
+
 
 class ProfileFragment : Fragment() {
 
     lateinit var binding: FragmentProfileBinding
     lateinit var viewModel: MainViewModel
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         binding = FragmentProfileBinding.inflate(layoutInflater)
         return binding.root
     }
@@ -37,15 +47,13 @@ class ProfileFragment : Fragment() {
 
         viewModel = (activity as NavigationDrawerActivity).viewModel
 
-       /* binding.toolbarProfile.setOnClickListener {
-            (activity as NavigationDrawerActivity).finish()
-        }*/
+        /* binding.toolbarProfile.setOnClickListener {
+             (activity as NavigationDrawerActivity).finish()
+         }*/
 
-        if (Prefs.getInt(Global.ID) != null || Prefs.getInt(Global.ID) != 0) {
-            var jsonObject = JsonObject()
-            jsonObject.addProperty("id", Prefs.getInt(Global.ID))
-            viewModel.getProfileDetailOneApi(jsonObject)
-        }
+        var jsonObject = JsonObject()
+        jsonObject.addProperty("id", Prefs.getInt(Global.ID))
+        viewModel.getProfileDetailOneApi(jsonObject)
 
         bindToObserver()
 
@@ -54,14 +62,43 @@ class ProfileFragment : Fragment() {
             requireActivity().startActivity(intent)
         }
 
+
+
+
+
+
         binding.changePasswordLc.setOnClickListener {
             switchFragmentWithData(ChangePasswordFragment(), "DataForProfileUpdateScreen")
         }
+
+        binding.btnlogout.setOnClickListener {
+            Global.showDialog(requireActivity())
+            CoroutineScope(Dispatchers.Main).launch {
+                delay(3000)
+                Global.hideDialog()
+                Prefs.clear()
+                Intent(activity, LoginActivity::class.java).also {
+                    startActivity(it)
+                    requireActivity().finish()
+                }
+                Toasty.info(requireContext(), "logOut Successfully").show()
+            }
+        }
+
 
     }
 
     override fun onResume() {
         super.onResume()
+        binding.tvUserId.text ="User Id :  ${Prefs.getInt(Global.ID)}"
+        binding.tvUsername.text =Prefs.getString(Global.FullName)
+        binding.tvEmail.text = Prefs.getString(Global.Email)
+        binding.tvPhone.text = Prefs.getString(Global.Mobile)
+        binding.tvDeliveryAddress.text = Prefs.getString(Global.DeliveryAddress)
+
+        binding.tvCharacterOfImageView.setText(
+            Prefs.getString(Global.FullName)[0].toString().uppercase(Locale.getDefault())
+        )
     }
 
     //todo bind observer.
@@ -69,16 +106,15 @@ class ProfileFragment : Fragment() {
         viewModel.profileDeatil.observe(viewLifecycleOwner, Event.EventObserver(
             onError = {
                 Global.hideDialog()
-                Toasty.error(requireActivity(),it, Toasty.LENGTH_SHORT).show()
+                Toasty.error(requireActivity(), it, Toasty.LENGTH_SHORT).show()
             },
             onLoading = {
                 Global.showDialog(requireActivity())
-            }, onSuccess = {
-                    response ->
+            }, onSuccess = { response ->
                 Global.hideDialog()
-                if (response.status == 200){
-                    setData(response.data[0])
-                }else {
+                if (response.status == 200) {
+                   // setData(response.data[0])
+                } else {
                     Toast.makeText(requireActivity(), response.message, Toast.LENGTH_SHORT).show()
                 }
             }
@@ -93,7 +129,9 @@ class ProfileFragment : Fragment() {
         binding.tvPhone.text = data.Mobile
         binding.tvDeliveryAddress.text = data.DeliveryAddress
 
-        binding.tvCharacterOfImageView.setText(String.valueOf(data.FullName[0]).uppercase(Locale.getDefault()))
+        binding.tvCharacterOfImageView.setText(
+            data.FullName[0].toString().uppercase(Locale.getDefault())
+        )
     }
 
     // Function to switch between fragments with data parse..
@@ -107,5 +145,6 @@ class ProfileFragment : Fragment() {
         transaction.addToBackStack(null) // Add to back stack to enable back navigation
         transaction.commit()
     }
+
 
 }

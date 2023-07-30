@@ -1,5 +1,10 @@
 package com.paybacktraders.paybacktraders.model.model.apiresponse
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+
+@Parcelize
 data class DataCLient(
     val BrokerName: String,
     val ConnectionStatus: String,
@@ -17,4 +22,4 @@ data class DataCLient(
     val TradingAcNo: String,
     val TradingAcPass: String,
     val id: Int
-)
+) : Parcelable

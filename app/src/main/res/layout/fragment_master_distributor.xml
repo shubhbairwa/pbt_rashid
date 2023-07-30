@@ -23,6 +23,8 @@
         app:srcCompat="@drawable/ic_baseline_add_24"
         app:tint="@color/white" />
 
+
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/select_type_input_layout"
         style="@style/dropdown"

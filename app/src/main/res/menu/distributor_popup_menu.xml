@@ -1,0 +1,17 @@
+<!-- res/menu/menu_image_options.xml -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/editDist"
+        android:icon="@drawable/ic_baseline_edit_24"
+        android:title="Edit"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/menuViewDistributors"
+        android:icon="@drawable/ic_baseline_close_24"
+        android:title="View Distributors" />
+    <item
+        android:id="@+id/menuViewClients"
+        android:icon="@drawable/ic_call"
+        android:title="View Clients" />
+</menu>

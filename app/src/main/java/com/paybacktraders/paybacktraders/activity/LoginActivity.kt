@@ -1,15 +1,13 @@
 package com.paybacktraders.paybacktraders.activity
 
 
-import android.app.Dialog
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.Toast
-import android.widget.Toast.makeText
 import androidx.lifecycle.ViewModelProvider
-import com.paybacktraders.paybacktraders.PayBackTradersApplication
 import com.paybacktraders.paybacktraders.R
 import com.paybacktraders.paybacktraders.activity.ui.forgot.ForgotPasswordActivity
 import com.paybacktraders.paybacktraders.api.ApiClient
@@ -44,8 +42,8 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setUpViewModel()
-        binding.etUserName.setText("admin@gmail.com")
-        binding.etPassword.setText("admin@123")
+      //  binding.etUserName.setText("admin@gmail.com")
+       // binding.etPassword.setText("admin@123")
         //Global.showDialog(this)
 //        CoroutineScope(Dispatchers.Main).launch {
 //            delay(2000)
@@ -91,6 +89,15 @@ class LoginActivity : AppCompatActivity() {
         }
 
         subscribeToObserver()
+
+        binding.tvPayBack.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://paybackbytrades.com/#/home"))
+
+            // Check if there's any app that can handle the Intent (e.g., Chrome)
+
+            // Open the link in the Chrome browser
+            startActivity(intent)
+        }
 
     }
 

@@ -5,7 +5,7 @@
         android:id="@+id/searchMenu"
         android:orderInCategory="100"
         android:visible="false"
-        android:iconTint="@color/white"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
         android:icon="@drawable/ic_search"
         android:title="@string/search"
         app:showAsAction="always" />
@@ -15,7 +15,7 @@
         android:icon="@drawable/ic_baseline_add_24"
         android:title="@string/add"
         android:visible="false"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/filterMenu"
         android:orderInCategory="100"
@@ -23,7 +23,7 @@
         android:iconTint="@color/white"
         android:icon="@drawable/ic_filter"
         android:title="@string/filter"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/dateMenu"
         android:orderInCategory="100"
@@ -31,6 +31,15 @@
         android:iconTint="@color/white"
         android:icon="@drawable/ic_calendar"
         android:title="@string/date"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/menuRefresh"
+        android:orderInCategory="100"
+        android:visible="false"
+        android:iconTint="@color/white"
+        android:icon="@drawable/ic_baseline_refresh_24"
+        android:title="@string/refresh"
         app:showAsAction="always" />
 
 

@@ -70,6 +70,18 @@ class MainViewModel(
     private val _dashBOardData = MutableLiveData<Event<Resource<DashBoardResponse>>>()
     val dashBOardData: LiveData<Event<Resource<DashBoardResponse>>> = _dashBOardData
 
+    private val _walletHistoryData = MutableLiveData<Event<Resource<ResponseWalletHistory>>>()
+    val walletHistoryData: LiveData<Event<Resource<ResponseWalletHistory>>> = _walletHistoryData
+
+    private val _walletApproval= MutableLiveData<Event<Resource<ResponseGlobal>>>()
+    val walletApproval: LiveData<Event<Resource<ResponseGlobal>>> = _walletApproval
+
+    private val _requestWithDrawlData = MutableLiveData<Event<Resource<ResponseGlobal>>>()
+    val requestWithDrawl: LiveData<Event<Resource<ResponseGlobal>>> = _requestWithDrawlData
+
+    private val _walletWithdrwalListRequestData = MutableLiveData<Event<Resource<ResponseWithdrawlRequest>>>()
+    val walletWithdrwalListRequestData: LiveData<Event<Resource<ResponseWithdrawlRequest>>> = _walletWithdrwalListRequestData
+
     private val _clientFilter = MutableLiveData<Event<Resource<ResponseClient>>>()
     val clientFilter: LiveData<Event<Resource<ResponseClient>>> = _clientFilter
 
@@ -180,6 +192,37 @@ class MainViewModel(
         viewModelScope.launch(Dispatchers.Main) {
             val result = repos.getDashboardData(data)
             _dashBOardData.postValue(Event(result))
+        }
+    }
+
+    fun getWalletHistory(data: HashMap<String, Any>) {
+        _walletHistoryData.postValue(Event(Resource.Loading()))
+        viewModelScope.launch(Dispatchers.Main) {
+            val result = repos.getWalletHistory(data)
+            _walletHistoryData.postValue(Event(result))
+        }
+    }
+    fun withdrawlApproval(data: HashMap<String, Any>) {
+        _walletApproval.postValue(Event(Resource.Loading()))
+        viewModelScope.launch(Dispatchers.Main) {
+            val result = repos.withdrawlApproval(data)
+            _walletApproval.postValue(Event(result))
+        }
+    }
+
+    fun sendWithDrawlrequest(data: HashMap<String, Any>) {
+        _requestWithDrawlData.postValue(Event(Resource.Loading()))
+        viewModelScope.launch(Dispatchers.Main) {
+            val result = repos.sendWithDrawlrequest(data)
+            _requestWithDrawlData.postValue(Event(result))
+        }
+    }
+
+    fun getWithdrawlRequestList(data: HashMap<String, Any>) {
+        _walletWithdrwalListRequestData.postValue(Event(Resource.Loading()))
+        viewModelScope.launch(Dispatchers.Main) {
+            val result = repos.getWithdrawlRequestList(data)
+            _walletWithdrwalListRequestData.postValue(Event(result))
         }
     }
 

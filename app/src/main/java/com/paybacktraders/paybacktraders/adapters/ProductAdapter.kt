@@ -108,6 +108,11 @@ class ProductAdapter :
         get() = differ.currentList
         set(value) = differ.submitList(value)
 
+    //function to search in local
+    fun filterData(filteredList: List<DataProduct>) {
+        differ.submitList(filteredList)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
         return ProductViewHolder(
             ItemProductBinding.inflate(

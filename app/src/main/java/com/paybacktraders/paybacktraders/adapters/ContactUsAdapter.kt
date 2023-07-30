@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.paybacktraders.paybacktraders.databinding.ItemContactUsAllBinding
 import com.paybacktraders.paybacktraders.model.model.apiresponse.DataContactUs
+import com.paybacktraders.paybacktraders.model.model.apiresponse.DataWithdrawlRequest
 
 
 class ContactUsAdapter :
@@ -101,6 +102,11 @@ class ContactUsAdapter :
     var product: MutableList<DataContactUs>
         get() = differ.currentList
         set(value) = differ.submitList(value)
+
+    //function to search in local
+    fun filterData(filteredList: List<DataContactUs>) {
+        differ.submitList(filteredList)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
         return ProductViewHolder(
